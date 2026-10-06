@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}My Account{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4 text-primary">Account Details</h1>
+
+  <!-- Account Summary Form -->
+  <form method="POST" class="border p-4 rounded bg-light shadow-sm">
+    {% csrf_token %}
+    <div class="mb-3">
+      LOGGED IN USER ACCOUNT DETAILS GO HERE
+    </div>
+  </form>
+</div>
+{% endblock %}
