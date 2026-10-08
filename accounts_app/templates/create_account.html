@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Comhluadar | Create Account </title>
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+  </head>
+
+<div class="container mt-4">
+  <h1 class="mb-4 text-primary">Create User Account</h1>
+
+  <!-- New Account Form -->
+  <form method="POST" class="border p-4 rounded bg-light shadow-sm">
+    {% csrf_token %}
+    <div class="mb-3">
+      NEW ACCOUNT FORM GOES HERE
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+  </form>
+</div>
