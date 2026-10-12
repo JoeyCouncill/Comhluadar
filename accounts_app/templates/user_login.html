@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Comhluadar | Log In </title>
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+  </head>
+
+<div class="container mt-4">
+  <h1 class="mb-4 text-primary">Log in to Comhluadar Account</h1>
+
+  <!-- Login Form -->
+  <form method="POST" class="border p-4 rounded bg-light shadow-sm">
+    {% csrf_token %}
+    <div class="mb-3">
+      LOGIN FORM GOES HERE
+    </div>
+    <a href="{% url 'all_posts_view' %}" class="btn btn-primary">
+              Log in
+            </a>
+  </form>
+</div>
