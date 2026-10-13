@@ -1,5 +1,5 @@
 ## Description
-<!-- Provide a breif decscription of the changes made. -->
+<!-- Provide a brief decscription of the changes made. -->
 
 ## Testing procedures
 <!-- Provide steps detailed enough for the team to understand how to test the change exists and works properly. -->
