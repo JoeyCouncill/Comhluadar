@@ -1,0 +1,15 @@
+{% extends 'base_service.html' %}
+{% block title %}View All Posts{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4 text-primary">View All Posts</h1>
+
+  <!-- Post View Form -->
+  <form method="POST" class="border p-4 rounded bg-light shadow-sm">
+    {% csrf_token %}
+    <div class="mb-3">
+      POST LIST GOES HERE
+    </div>
+  </form>
+</div>
+{% endblock %}

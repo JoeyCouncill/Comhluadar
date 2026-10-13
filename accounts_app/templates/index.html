@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comhluadar | Welcome!</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="text-center mb-4">
+        <h1 class="display-4">Welcome to Comhluadar!</h1>
+        <p class="lead">
+          Give or request help from the UNO community.
+        </p>
+      </div>
+      <div class="card shadow">
+        <div class="card-body">
+          <h5 class="card-title">Features</h5>
+          <p class="card-text">This application allows you to:</p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              Post requests for help from other UNO students.
+            </li>
+            <li class="list-group-item">
+              Browse requests and offer your assistance.
+            </li>
+            <li class="list-group-item">
+              Send or receive private messages to confirm meeting details.
+            </li>
+          </ul>
+          <div class="mt-4 text-center">
+            <a href="{% url 'user_login' %}" class="btn btn-primary">
+              Log in
+            </a>
+          <div class="mt-4 text-center">
+            <a href="{% url 'create_account' %}" class="btn btn-primary">
+              Create Account
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  </body>
+</html>
