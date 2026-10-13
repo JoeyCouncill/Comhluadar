@@ -63,8 +63,8 @@ def create_account(request):
 
         try:
              validate_password(password1, user)
-        except ValidationError:
-             errors.extend(ValidationError.messages)
+        except ValidationError as exc:
+             errors.extend(exc.messages)
 
         if not errors:
             try:
