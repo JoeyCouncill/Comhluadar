@@ -33,7 +33,7 @@ def user_login(request):
             login(request, user)
             return redirect("account_summary")
 
-        messages.error(request, "Invalid email, username, or pasword.")
+        messages.error(request, "Invalid email, username, or password.")
     
     return render(request, "user_login.html")
 
