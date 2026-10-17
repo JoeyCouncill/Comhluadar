@@ -9,6 +9,8 @@
     {% csrf_token %}
     <div class="mb-3">
       LOGGED IN USER ACCOUNT DETAILS GO HERE
+      <p>Name: {{ user.get_full_name }}</p>
+      <p>Email: {{user.email }}</p>
     </div>
   </form>
 </div>
