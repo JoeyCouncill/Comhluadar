@@ -17,7 +17,7 @@ or run a certain class to focus on only the tests for a single page. The followi
 pytest selenium_tests.py -k TestWelcome
 ```
 
-As this version is only intended for local testing, make sure you also have the Google Chrome browser installed. While tests run you will see browsers flash as the tests are run.
+As this version is only intended for local testing, make sure you also have the Google Chrome browser installed. While tests run and complete you will see browsers appear and close.
 ## PR Checklist
 <!-- in addition to requiring one approval, the following checks must be completed successfully before merging. -->
 - [ ] The project deploys and runs properly on a local environment.
