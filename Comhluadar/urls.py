@@ -23,3 +23,4 @@ urlpatterns = [
     path('', include('message_app.urls')),
     path('admin/', admin.site.urls),
 ]
+ldrgsioenoierhg0'aohgn0'iaes
