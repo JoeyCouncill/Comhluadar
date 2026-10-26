@@ -2,14 +2,78 @@
 {% block title %}New Post{% endblock %}
 {% block content %}
 <div class="container mt-4">
-  <h1 class="mb-4 text-primary">Offer/Request Services</h1>
+  <h1 class="mb-4 text-primary">Offer or Request Services</h1>
 
   <!-- New Post Form -->
   <form method="POST" class="border p-4 rounded bg-light shadow-sm">
     {% csrf_token %}
-    <div class="mb-3">
-      NEW POST FORM GOES HERE
+
+    <!-- Display success/error messages, if any -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-info"
+             style="white-space: pre-line;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div clas="mb-3">
+      <label for="post_type" class="form-label">
+        Are you offering or requesting services?
+      </label>
+      <select
+        id="post_type"
+        name="post_type"
+        class="form-select"
+        required
+      >
+        <option value="" selected disabled>Select an option</option>
+        <option value="Offer">Offer a Service</option>
+        <option value="Request">Request a Service</option>
+      </select>
     </div>
+
+    <div class="mb-3">
+      <label for="service_name" class="form-label">Service Description</label>
+      <input
+        type="text"
+        id="service_name"
+        name="name"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="category" class="form-label">Service Category</label>
+      <select
+        id="category"
+        name="category"
+        class="form-select"
+        required
+      >
+        <option value="" selected disabled>Select a Category</option>
+        <option value="Tutoring">Tutoring</option>
+        <option value="Specialized Labor">Specialized Labor</option>
+        <option value="General Labor">General Labor</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="date" class="form-label">Service Date</label>
+      <input
+        type="date"
+        id="date"
+        name="date"
+        class="form-control"
+        min="{{ today }}"
+        required
+      />
+    </div>
+    <button type="submit" class="btn btn-success">
+      Post Service Request
+    </button>
   </form>
 </div>
 {% endblock %}
