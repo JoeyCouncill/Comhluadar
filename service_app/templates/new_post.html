@@ -4,11 +4,7 @@
 <div class="container mt-4">
   <h1 class="mb-4 text-primary">Offer or Request Services</h1>
 
-  <!-- New Post Form -->
-  <form method="POST" class="border p-4 rounded bg-light shadow-sm">
-    {% csrf_token %}
-
-    <!-- Display success/error messages, if any -->
+  <!-- Display success/error messages, if any -->
     {% if messages %}
       {% for message in messages %}
         <div class="alert alert-info"
@@ -18,28 +14,32 @@
       {% endfor %}
     {% endif %}
 
-    <div clas="mb-3">
-      <label for="post_type" class="form-label">
+  <!-- New Post Form -->
+  <form method="POST" class="border p-4 rounded bg-light shadow-sm">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="listing_type" class="form-label">
         Are you offering or requesting services?
       </label>
       <select
-        id="post_type"
-        name="post_type"
+        id="listing_type"
+        name="listing_type"
         class="form-select"
         required
       >
         <option value="" selected disabled>Select an option</option>
-        <option value="Offer">Offer a Service</option>
-        <option value="Request">Request a Service</option>
+        <option value="offer">Offer a Service</option>
+        <option value="request">Request a Service</option>
       </select>
     </div>
 
     <div class="mb-3">
-      <label for="service_name" class="form-label">Service Description</label>
+      <label for="title" class="form-label">Service Description</label>
       <input
         type="text"
-        id="service_name"
-        name="name"
+        id="title"
+        name="title"
         class="form-control"
         required
       />

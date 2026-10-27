@@ -1,11 +1,11 @@
 from django import forms
-from .models import Service, post_types
+from .models import Service
 from django.utils import timezone
 
 class ServiceForm(forms.ModelForm):
 	class Meta:
 		model = Service
-		fields = ['name', 'category', 'date', 'post_type']
+		fields = ['listing_type', 'title', 'category', 'date']
 
 	def clean_date(self):
 		date = self.cleaned_data['date']
