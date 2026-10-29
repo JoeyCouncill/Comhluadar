@@ -41,7 +41,7 @@ class Message(models.Model):
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Metadata:
+    class Meta:
         ordering = ["created_at", "id"]
         indexes = [models.Index(fields=["chat", "created_at", "id"])]
 
