@@ -5,4 +5,4 @@ from .models import Service
 class ServiceForm(forms.ModelForm):
 	class Meta:
 		model = Service
-		fields = ['name', 'category', 'date']
+		fields = ['title', 'category', 'date']
