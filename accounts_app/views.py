@@ -83,3 +83,6 @@ def create_account(request):
 
 def account_summary(request):
     return render(request, "account_summary.html")
+
+def edit_profile(request):
+    return render(request, "edit_profile.html")
