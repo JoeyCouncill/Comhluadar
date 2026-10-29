@@ -1,17 +1,104 @@
 {% extends 'base.html' %}
-{% block title %}My Account{% endblock %}
+
+{% block title %}My Profile{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
-  <h1 class="mb-4 text-primary">Account Details</h1>
 
-  <!-- Account Summary Form -->
-  <form method="POST" class="border p-4 rounded bg-light shadow-sm">
-    {% csrf_token %}
-    <div class="mb-3">
-      LOGGED IN USER ACCOUNT DETAILS GO HERE
-      <p>Name: {{ user.get_full_name }}</p>
-      <p>Email: {{user.email }}</p>
+  <!-- Cover Photo -->
+  <div
+    id="profile-cover-photo"
+    class="border rounded bg-light d-flex align-items-center justify-content-center"
+    style="height: 220px;"
+  >
+    Cover Photo
+  </div>
+
+  <!-- Profile Header -->
+  <div class="d-flex align-items-end justify-content-between mb-4">
+
+    <div class="d-flex align-items-end">
+
+      <!-- Profile Picture -->
+      <div
+        id="profile-picture"
+        class="border rounded-circle bg-white d-flex align-items-center justify-content-center"
+        style="
+          width: 140px;
+          height: 140px;
+          margin-top: -60px;
+          margin-left: 30px;
+        "
+      >
+        Profile Picture
+      </div>
+
+      <div class="ms-4 mb-2">
+
+        <h2 id="profile-full-name" class="mb-1">
+          {{ user.get_full_name|default:"Student Name" }}
+        </h2>
+
+        <p id="profile-school" class="mb-1 text-muted">
+          University of Nebraska Omaha
+        </p>
+
+        <p id="profile-email" class="mb-0">
+          {{ user.email }}
+        </p>
+
+      </div>
     </div>
-  </form>
+
+    <a
+      href="{% url 'edit_profile' %}"
+      class="btn btn-primary"
+      id="edit-profile-button"
+    >
+      Edit Profile
+    </a>
+
+  </div>
+
+  <!-- About -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>About Me</h4>
+
+      <p id="profile-bio" class="mb-0">
+        Student bio will appear here.
+      </p>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>Skills</h4>
+
+      <div id="profile-skills">
+        <span class="badge bg-secondary me-2">Example Skill</span>
+        <span class="badge bg-secondary me-2">Example Skill</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interests -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>Interests</h4>
+
+      <div id="profile-interests">
+        <span class="badge bg-light text-dark border me-2">
+          Example Interest
+        </span>
+
+        <span class="badge bg-light text-dark border me-2">
+          Example Interest
+        </span>
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
