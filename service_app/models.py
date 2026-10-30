@@ -38,33 +38,33 @@ class Service(models.Model):
 		return self.title
 
 class ServiceReview(models.Model):
-	service = models.ForeignKey(
-		Service,
-		on_delete=models.CASCADE,
-		related_name="reviews",
-	)
-	reviewer = models.ForeignKey(
-		settings.AUTH_USER_MODEL,
-		on_delete=models.CASCADE,
-		related_name="service_reviews",
-	)
-	rating = models.PositiveSmallIntegerField(
-		validators=[MinValueValidator(1), MaxValueValidator(5)],
-	)
-	comment = models.TextField(blank=True)
-	created_at = models.DateTimeField(auto_now_add=True)
+    service = models.ForeignKey(
+        Service,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="service_reviews",
+    )
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+    )
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-	class Meta:
-		constraints = [
-			models.UniqueConstraint(
-				fields=["service", "reviewer"],
-				name="unique_service_review",
-			),
-			models.CheckConstraint(
-				condition=models.Q(rating__gte=1, rating__lte=5),
-				name="service_rating_between_1_and_5",
-			),
-		]
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["service", "reviewer"],
+                name="unique_service_review",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(rating__gte=1, rating__lte=5),
+                name="service_rating_between_1_and_5",
+            ),
+        ]
 
-	def __str__(self):
-		return f"Service {self.service_id}: {self.rating}/5"
+    def __str__(self):
+        return f"Service {self.service_id}: {self.rating}/5"
