@@ -5,7 +5,6 @@ from django.utils import timezone
 class ServiceForm(forms.ModelForm):
 	class Meta:
 		model = Service
-<<<<<<< HEAD
 		fields = ['listing_type', 'title', 'category', 'date']
 
 	def clean_date(self):
@@ -15,6 +14,3 @@ class ServiceForm(forms.ModelForm):
 			raise forms.ValidationError('Service date cannot be in the past.')
 
 		return date
-=======
-		fields = ['title', 'category', 'date']
->>>>>>> main
