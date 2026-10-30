@@ -59,7 +59,7 @@ def create_account(request):
         if password1 != password2:
              errors.append("Passwords do not match.")
 
-        user = User(username=email, email=email, first_name=name)
+        user = User(username=email.split('@', 1)[0], email=email, first_name=name)
 
         try:
              validate_password(password1, user)
