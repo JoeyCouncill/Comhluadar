@@ -3,7 +3,6 @@ from datetime import date
 from service_app.models import Service
 from accounts_app.models import Profile
 
-
 @pytest.fixture
 def test_user(db, django_user_model, client):
     user = django_user_model.objects.create_user(
@@ -21,6 +20,7 @@ def test_user(db, django_user_model, client):
 def other_test_user(db, django_user_model, client):
     user = django_user_model.objects.create_user(
         username="parker@unomaha.edu",
+        email="parker@unomaha.edu",
         password="My-Other-Test-Password-928!",
     )
     profile, _ = Profile.objects.get_or_create(user=user)
