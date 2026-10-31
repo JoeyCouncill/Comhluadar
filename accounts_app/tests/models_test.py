@@ -3,42 +3,42 @@ import pytest
 from accounts_app.models import Profile, UserBlock, UserReview
 
 
-def test_profile_model_links_to_user(user):
-    profile, _ = Profile.objects.get_or_create(user=user)
+def test_profile_model_links_to_user(test_user):
+    profile, _ = Profile.objects.get_or_create(user=test_user)
     profile.phone_number = "402-123-4567"
     profile.save()
-    user.refresh_from_db()
-    assert user.profile.phone_number == "402-123-4567"
+    test_user.refresh_from_db()
+    assert test_user.profile.phone_number == "402-123-4567"
 
 
-def test_user_cannot_have_two_profiles(user):
-    Profile.objects.get_or_create(user=user)
+def test_user_cannot_have_two_profiles(test_user):
+    Profile.objects.get_or_create(user=test_user)
     with pytest.raises(IntegrityError):
         with transaction.atomic():
-            Profile.objects.create(user=user)
+            Profile.objects.create(user=test_user)
 
 
-def test_user_cannot_review_self(user):
+def test_user_cannot_review_self(test_user):
     with pytest.raises(IntegrityError):
         with transaction.atomic():
             UserReview.objects.create(
-                reviewer=user,
-                reviewed_user=user,
+                reviewer=test_user,
+                reviewed_user=test_user,
                 rating=5,
             )
 
 
-def test_user_cannot_review_same_person_twice(user, other_user):
+def test_user_cannot_review_same_person_twice(test_user, other_test_user):
     UserReview.objects.create(
-        reviewer=user,
-        reviewed_user=other_user,
+        reviewer=test_user,
+        reviewed_user=other_test_user,
         rating=4,
     )
     with pytest.raises(IntegrityError):
         with transaction.atomic():
             UserReview.objects.create(
-                reviewer=user,
-                reviewed_user=other_user,
+                reviewer=test_user,
+                reviewed_user=other_test_user,
                 rating=5,
             )
 
@@ -47,44 +47,44 @@ def test_user_cannot_review_same_person_twice(user, other_user):
 
 @pytest.mark.parametrize("rating", [0, 6])
 def test_user_rating_reject_not_between_one_and_five(
-    user, other_user, rating
+    test_user, other_test_user, rating
 ):
     with pytest.raises(IntegrityError):
         with transaction.atomic():
             UserReview.objects.create(
-                reviewer=user,
-                reviewed_user=other_user,
+                reviewer=test_user,
+                reviewed_user=other_test_user,
                 rating=rating,
             )
 
 
 @pytest.mark.parametrize("rating", [1, 5])
-def test_user_rating_accept_between_one_and_five(user, other_user, rating):
+def test_user_rating_accept_between_one_and_five(test_user, other_test_user, rating):
     review = UserReview.objects.create(
-        reviewer=user,
-        reviewed_user=other_user,
+        reviewer=test_user,
+        reviewed_user=other_test_user,
         rating=rating,
     )
     review.refresh_from_db()
     assert review.rating == rating
 
 
-def test_user_cannot_block_self(user):
+def test_user_cannot_block_self(test_user):
     with pytest.raises(IntegrityError):
         with transaction.atomic():
-            UserBlock.objects.create(blocker=user, blocked=user)
+            UserBlock.objects.create(blocker=test_user, blocked=test_user)
 
 
-def test_duplicate_block_rejected(user, other_user):
-    UserBlock.objects.create(blocker=user, blocked=other_user)
+def test_duplicate_block_rejected(test_user, other_test_user):
+    UserBlock.objects.create(blocker=test_user, blocked=other_test_user)
 
     with pytest.raises(IntegrityError):
         with transaction.atomic():
-            UserBlock.objects.create(blocker=user, blocked=other_user)
+            UserBlock.objects.create(blocker=test_user, blocked=other_test_user)
 
 
-def test_block_is_directional(user, other_user):
-    UserBlock.objects.create(blocker=user, blocked=other_user)
+def test_block_is_directional(test_user, other_test_user):
+    UserBlock.objects.create(blocker=test_user, blocked=other_test_user)
 
-    assert user.blocks_created.filter(blocked=other_user).exists()
-    assert not other_user.blocks_created.filter(blocked=user).exists()
+    assert test_user.blocks_created.filter(blocked=other_test_user).exists()
+    assert not other_test_user.blocks_created.filter(blocked=test_user).exists()
