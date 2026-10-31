@@ -40,15 +40,18 @@ def user_login(request):
 @login_not_required
 def create_account(request):
     if request.method == "POST":
-        name = request.POST.get("name", "").strip()
+        firstName = request.POST.get("firstName", "").strip()
+        lastName = request.POST.get("lastName", "").strip()
         email = request.POST.get("email", "").strip().lower()
         password1 = request.POST.get("password1", "")
         password2 = request.POST.get("password2", "")
 
         errors = []
 
-        if not name:
-             errors.append("Please enter your full name.")
+        if not firstName:
+             errors.append("Please enter your first name.")
+        if not lastName:
+                     errors.append("Please enter your last name.")
         try:
              validate_email(email)
         except ValidationError:
@@ -59,7 +62,7 @@ def create_account(request):
         if password1 != password2:
              errors.append("Passwords do not match.")
 
-        user = User(username=email.split('@', 1)[0], email=email, first_name=name)
+        user = User(username=email.split('@', 1)[0], email=email, first_name=firstName, last_name=lastName)
 
         try:
              validate_password(password1, user)
