@@ -1,6 +1,6 @@
 import pytest
 from datetime import date
-from service_app.models import Service
+from services.models import Listing
 
 
 @pytest.fixture
@@ -26,8 +26,8 @@ def other_test_user(db, django_user_model, client):
     return user
 
 @pytest.fixture
-def service(test_user):
-    return Service.objects.create(
+def listing(test_user):
+    return Listing.objects.create(
         author=test_user,
         listing_type="offer",
         title="Tutoring",

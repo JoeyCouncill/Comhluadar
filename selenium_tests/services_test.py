@@ -20,7 +20,7 @@ class TestNewPost:
         """
         Attempting to access the 'new post' page directly while not logged in redirects to log in page.
         """
-        browser.get(live_server.url + '/service/new_post')
+        browser.get(live_server.url + '/services/new_post')
 
         assert '/user_login/' in browser.current_url
         
