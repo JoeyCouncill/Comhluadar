@@ -9,7 +9,9 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name="profile",
     )
-
+    @property
+    def display_name(self):
+        return self.user.email.partition("@")[0]
     ##djangos built in AUTH_USER_MODEL already holds email, password, username, first name, and last name
     ##the profile model is for adding fields we want on the profile page/other than the above mentioned fields (: 
     ##im just putting phone number as a placeholder
