@@ -76,7 +76,7 @@ def test_login_authenticates_user(client, django_user_model):
     response = client.post(
         reverse("user_login"),
         {
-            "username": user.username,
+            "email": user.username,
             "password": "My-Strong-Test-Password-928!",
         },
     )
