@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <h1 class="mb-4">Edit Profile</h1>
+
+  <form id="edit-profile-form">
+
+    <!-- Profile Picture -->
+    <div class="mb-3">
+      <label for="profile-picture-input" class="form-label">
+        Profile Picture
+      </label>
+
+      <input
+        type="file"
+        class="form-control"
+        id="profile-picture-input"
+        name="profile_picture"
+        accept="image/*"
+      >
+    </div>
+
+    <!-- Cover Photo -->
+    <div class="mb-3">
+      <label for="cover-photo-input" class="form-label">
+        Cover Photo
+      </label>
+
+      <input
+        type="file"
+        class="form-control"
+        id="cover-photo-input"
+        name="cover_photo"
+        accept="image/*"
+      >
+    </div>
+
+    <!-- First Name -->
+    <div class="mb-3">
+      <label for="first-name-input" class="form-label">
+        First Name
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        id="first-name-input"
+        name="first_name"
+        value="{{ user.first_name }}"
+      >
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-3">
+      <label for="last-name-input" class="form-label">
+        Last Name
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        id="last-name-input"
+        name="last_name"
+        value="{{ user.last_name }}"
+      >
+    </div>
+
+    <!-- UNO Email -->
+    <div class="mb-3">
+      <label class="form-label">
+        UNO Email
+      </label>
+
+      <input
+        type="email"
+        class="form-control"
+        value="{{ user.email }}"
+        disabled
+      >
+    </div>
+
+    <!-- School -->
+    <div class="mb-3">
+      <label class="form-label">
+        School
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        value="University of Nebraska Omaha"
+        disabled
+      >
+    </div>
+
+    <!-- Skills -->
+    <div class="mb-3">
+      <label for="skills-select" class="form-label">
+        Skills
+      </label>
+
+      <select
+        class="form-select"
+        id="skills-select"
+        name="skills"
+      >
+        <option value="">Select a skill</option>
+        <option value="tutoring">Tutoring</option>
+        <option value="technology">Technology</option>
+        <option value="automotive">Automotive</option>
+        <option value="art-design">Art & Design</option>
+        <option value="photography">Photography</option>
+        <option value="repairs">Repairs</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <!-- Other Skill -->
+    <div
+      class="mb-3"
+      id="other-skill-container"
+      style="display: none;"
+    >
+      <label for="other-skill-input" class="form-label">
+        Other Skill
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        id="other-skill-input"
+        name="other_skill"
+        placeholder="Enter another skill"
+      >
+    </div>
+
+    <!-- Interests -->
+    <div class="mb-3">
+      <label for="interests-input" class="form-label">
+        Interests
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        id="interests-input"
+        name="interests"
+        placeholder="Add interests"
+      >
+    </div>
+
+    <!-- About Me -->
+    <div class="mb-3">
+      <label for="bio-input" class="form-label">
+        About Me
+      </label>
+
+      <textarea
+        class="form-control"
+        id="bio-input"
+        name="bio"
+        rows="5"
+        maxlength="500"
+        placeholder="Tell other UNO students a little about yourself."
+      ></textarea>
+
+      <div class="form-text">
+        Maximum 500 characters.
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <button
+      type="button"
+      class="btn btn-primary"
+      id="save-profile-button"
+    >
+      Save Changes
+    </button>
+
+    <a
+      href="{% url 'account_summary' %}"
+      class="btn btn-secondary"
+      id="cancel-profile-button"
+    >
+      Cancel
+    </a>
+
+  </form>
+
+</div>
+
+<script>
+  const skillsSelect = document.getElementById("skills-select");
+  const otherSkillContainer = document.getElementById("other-skill-container");
+  const otherSkillInput = document.getElementById("other-skill-input");
+
+  skillsSelect.addEventListener("change", function () {
+    if (this.value === "other") {
+      otherSkillContainer.style.display = "block";
+    } else {
+      otherSkillContainer.style.display = "none";
+      otherSkillInput.value = "";
+    }
+  });
+</script>
+
+{% endblock %}
