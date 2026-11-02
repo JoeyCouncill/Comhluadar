@@ -20,8 +20,7 @@ class Service(models.Model):
 		related_name="services",
 	)
 
-	listing_type = models.CharField(choices=ListingType.choices)
-
+	listing_type = models.CharField(max_length=100, choices=ListingType.choices)
 	title = models.CharField(max_length=200)
 	description = models.TextField(blank=True)
 	category = models.CharField(
