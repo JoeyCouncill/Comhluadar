@@ -9,7 +9,6 @@ from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from accounts_app.models import Profile
 
-
 User = get_user_model()
 
 def hello_world(request):
@@ -22,7 +21,7 @@ def front_page(request):
 @login_not_required
 def user_login(request):
     if request.method == "POST":
-        username = request.POST.get("email", "").strip()
+        username = request.POST.get("username", "").strip().lower()
         password = request.POST.get("password", "")
 
         user = authenticate(
