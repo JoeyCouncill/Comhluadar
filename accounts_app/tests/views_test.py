@@ -14,7 +14,8 @@ def test_login_page_loads(client):
 def test_create_account_page_loads(client):
     response = client.get(reverse("create_account"))
     assert response.status_code == 200
-    assert b"Full Name" in response.content
+    assert b"First Name" in response.content
+    assert b"Last Name" in response.content
     assert b"UNO Email" in response.content
     assert b"Confirm Password" in response.content
 
@@ -75,7 +76,7 @@ def test_login_authenticates_user(client, django_user_model):
     response = client.post(
         reverse("user_login"),
         {
-            "username": user.username,
+            "email": user.username,
             "password": "My-Strong-Test-Password-928!",
         },
     )
