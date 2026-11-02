@@ -21,7 +21,7 @@ def front_page(request):
 @login_not_required
 def user_login(request):
     if request.method == "POST":
-        username = request.POST.get("username", "").strip()
+        username = request.POST.get("username", "").strip().lower()
         password = request.POST.get("password", "")
 
         user = authenticate(
