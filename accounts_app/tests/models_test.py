@@ -4,15 +4,11 @@ from accounts_app.models import Profile, UserBlock, UserReview
 
 
 def test_profile_model_links_to_user(test_user):
-    profile, _ = Profile.objects.get_or_create(user=test_user)
-    profile.phone_number = "402-123-4567"
-    profile.save()
-    test_user.refresh_from_db()
     assert test_user.profile.phone_number == "402-123-4567"
+    assert test_user.profile.display_name == "deepa"
 
 
 def test_user_cannot_have_two_profiles(test_user):
-    Profile.objects.get_or_create(user=test_user)
     with pytest.raises(IntegrityError):
         with transaction.atomic():
             Profile.objects.create(user=test_user)

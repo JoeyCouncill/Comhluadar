@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_not_required
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
+from accounts_app.models import Profile
 
 User = get_user_model()
 
@@ -20,7 +21,7 @@ def front_page(request):
 @login_not_required
 def user_login(request):
     if request.method == "POST":
-        username = request.POST.get("email", "").strip()
+        username = request.POST.get("username", "").strip().lower()
         password = request.POST.get("password", "")
 
         user = authenticate(
@@ -62,7 +63,7 @@ def create_account(request):
         if password1 != password2:
              errors.append("Passwords do not match.")
 
-        user = User(username=email.split('@', 1)[0], email=email, first_name=firstName, last_name=lastName)
+        user = User(username=email, email=email,  first_name=firstName, last_name=lastName)
 
         try:
              validate_password(password1, user)
@@ -74,6 +75,7 @@ def create_account(request):
                 with transaction.atomic():
                     user.set_password(password1)
                     user.save()
+                    Profile.objects.create(user=user)
             except IntegrityError:
                 errors.append("An account with this email already exists.")
             else:
