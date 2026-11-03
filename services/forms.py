@@ -1,10 +1,10 @@
 from django import forms
-from .models import Service
 from django.utils import timezone
+from .models import Listing
 
 class CreateServiceForm(forms.ModelForm):
 	class Meta:
-		model = Service
+		model = Listing
 		fields = ['listing_type', 'title', 'category', 'date']
 
 	def clean_date(self):

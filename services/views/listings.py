@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Service
-from .forms import CreateServiceForm
+from ..forms import CreateServiceForm
 from django.contrib import messages
 from django.utils import timezone
+from services.forms import ListingForm
 
 def all_posts_view(request):
 	return render(request, 'all_posts_view.html')
