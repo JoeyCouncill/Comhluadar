@@ -4,7 +4,7 @@ from django.test import TestCase
 import pytest
 from urllib.parse import parse_qs, urlsplit
 from django.urls import reverse
-from service_app.models import Service
+from services.models import Service
 from django.contrib.messages import get_messages
 
 

@@ -11,7 +11,7 @@ class Chat(models.Model):
     ##allow chats to be tied to specific service offers/requests 
     # (we dont have to use/implement if we dont want just thought it would be nice)
     service = models.ForeignKey(
-        "service_app.Service",
+        "services.Service",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

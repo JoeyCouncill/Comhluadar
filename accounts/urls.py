@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import * 
+from .views.profile import * 
+from .views.authentication import *
 
 urlpatterns = [
     path("", front_page, name="front_page"),

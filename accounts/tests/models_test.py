@@ -1,6 +1,6 @@
 from django.db import IntegrityError, transaction
 import pytest
-from accounts_app.models import Profile, UserBlock, UserReview
+from accounts.models import Profile, UserBlock, UserReview
 
 
 def test_profile_model_links_to_user(test_user):

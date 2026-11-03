@@ -1,7 +1,7 @@
 import pytest
 from datetime import date
-from service_app.models import Service
-from accounts_app.models import Profile
+from services.models import Service
+from accounts.models.models import Profile
 
 @pytest.fixture
 def test_user(db, django_user_model, client):

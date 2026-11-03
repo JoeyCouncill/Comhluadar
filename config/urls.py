@@ -4,9 +4,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('', include('service_app.urls')),
-    path('', include('accounts_app.urls')),
-    path('', include('message_app.urls')),
+    path('', include('services.urls')),
+    path('', include('accounts.urls')),
+    path('', include('messaging.urls')),
     path('admin/', admin.site.urls),
 ]
 if settings.DEBUG:

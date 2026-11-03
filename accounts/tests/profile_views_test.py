@@ -1,12 +1,9 @@
 from io import BytesIO
-from urllib.parse import parse_qs, urlsplit
 import pytest
 from PIL import Image
-from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.templatetags.static import static
 from django.urls import reverse
-from accounts_app.models import Profile
+from accounts.models import Profile
 
 
 pytestmark = pytest.mark.django_db
@@ -21,7 +18,6 @@ def pf_data():
         "interests": "Programming",
         "bio": "Hello world.",
     }
-
 
 
 def make_image(name="picture.png"):
