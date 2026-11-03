@@ -63,7 +63,7 @@ class TestLogin:
         alert = WebDriverWait(browser, 10).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, ".alert"))
             )
-        assert "Invalid email, username, or password." in alert.text
+        assert "Invalid email or password." in alert.text
         
 
     def test_login_incorrect_password(self, browser, live_server):
