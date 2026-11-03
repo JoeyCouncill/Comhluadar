@@ -93,7 +93,7 @@
 
       <div id="profile-skills">
         <span class="badge bg-secondary me-2">
-          {% if user.profile.skills == "other" %}
+          {% if user.profile.skills == "Other" %}
             {{ user.profile.other_skill }}
           {% else %}
             {{ user.profile.get_skills_display|default:"No skills added yet." }}

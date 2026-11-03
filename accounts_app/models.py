@@ -24,13 +24,13 @@ class Profile(models.Model):
     ##the profile model is for adding fields we want on the profile page/other than the above mentioned fields (: 
 
     SKILL_CHOICES = [
-        ("tutoring", "Tutoring"),
-        ("technology", "Technology"),
-        ("automotive", "Automotive"),
-        ("art-design", "Art & Design"),
-        ("photography", "Photography"),
-        ("repairs", "Repairs"),
-        ("other", "Other"),
+        ("Tutoring", "Tutoring"),
+        ("Technology", "Technology"),
+        ("Automotive", "Automotive"),
+        ("Art-design", "Art & Design"),
+        ("Photography", "Photography"),
+        ("Repairs", "Repairs"),
+        ("Other", "Other"),
     ]
 
     skills = models.CharField(max_length=20, choices=SKILL_CHOICES, blank=True)

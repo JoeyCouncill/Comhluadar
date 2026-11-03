@@ -37,7 +37,7 @@ class EditProfileForm(forms.ModelForm):
                     "Images must be under 5 MB.",
                 )
 
-        if cleaned_data.get("skills") == "other":
+        if cleaned_data.get("skills") == "Other":
             if not cleaned_data.get("other_skill"):
                 self.add_error(
                     "other_skill",
