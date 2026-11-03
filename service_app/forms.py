@@ -2,7 +2,7 @@ from django import forms
 from .models import Service
 from django.utils import timezone
 
-class ServiceForm(forms.ModelForm):
+class CreateServiceForm(forms.ModelForm):
 	class Meta:
 		model = Service
 		fields = ['listing_type', 'title', 'category', 'date']

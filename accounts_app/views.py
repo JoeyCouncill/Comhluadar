@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from accounts_app.models import Profile
+from accounts_app.forms import EditProfileForm
 
 User = get_user_model()
 
@@ -89,4 +90,23 @@ def account_summary(request):
     return render(request, "account_summary.html")
 
 def edit_profile(request):
-    return render(request, "edit_profile.html")
+    User = request.user
+
+    form = EditProfileForm(
+        request.POST if request.method == "POST" else None,
+        request.FILES if request.method == "POST" else None,
+        instance=User.profile,
+        user=User,
+    )
+
+    if request.method == "POST" and form.is_valid():
+        with transaction.atomic():
+            User.first_name = form.cleaned_data["first_name"]
+            User.last_name = form.cleaned_data["last_name"]
+            User.save(update_fields=["first_name", "last_name"])
+            form.save()
+
+        messages.success(request, "Your profile has been updated.")
+        return redirect("account_summary")
+
+    return render(request, "edit_profile.html", {"form": form})

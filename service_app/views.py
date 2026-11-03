@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Service
-from .forms import ServiceForm
+from .forms import CreateServiceForm
 from django.contrib import messages
 from django.utils import timezone
 
@@ -9,7 +9,7 @@ def all_posts_view(request):
 
 def new_post(request):
 	if request.method == 'POST':
-		form = ServiceForm(request.POST)
+		form = CreateServiceForm(request.POST)
 
 		if form.is_valid():
 			service = form.save(commit=False)
@@ -25,7 +25,7 @@ def new_post(request):
 		else:
 			messages.error(request, 'An error occurred. Please check your entry and try again.')
 	else:
-		form = ServiceForm()
+		form = CreateServiceForm()
 
 	return render(request, 'new_post.html', {
 		'form': form,
