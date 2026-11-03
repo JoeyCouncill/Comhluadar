@@ -6,7 +6,7 @@ from django.urls import reverse
 def test_login_page_loads(client):
     response = client.get(reverse("user_login"))
     assert response.status_code == 200
-    assert b"Email or Username" in response.content
+    assert b"Email" in response.content
     assert b"Password" in response.content
 
 

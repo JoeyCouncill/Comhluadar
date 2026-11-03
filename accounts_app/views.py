@@ -21,12 +21,12 @@ def front_page(request):
 @login_not_required
 def user_login(request):
     if request.method == "POST":
-        username = request.POST.get("username", "").strip().lower()
+        email = request.POST.get("email", "").strip().lower()
         password = request.POST.get("password", "")
 
         user = authenticate(
             request,
-            username=username,
+            username=email,
             password=password,
         )
 
@@ -34,7 +34,7 @@ def user_login(request):
             login(request, user)
             return redirect("account_summary")
 
-        messages.error(request, "Invalid email, username, or password.")
+        messages.error(request, "Invalid email or password.")
     
     return render(request, "user_login.html")
 
@@ -63,8 +63,7 @@ def create_account(request):
         if password1 != password2:
              errors.append("Passwords do not match.")
 
-        user = User(username=email, email=email,  first_name=firstName, last_name=lastName)
-
+        user = User(username=email, email=email, first_name=firstName, last_name=lastName)
         try:
              validate_password(password1, user)
         except ValidationError as exc:

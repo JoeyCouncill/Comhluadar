@@ -6,6 +6,8 @@ from accounts_app.models import Profile
 @pytest.fixture
 def test_user(db, django_user_model, client):
     user = django_user_model.objects.create_user(
+        first_name="deepa",
+        last_name="Pollali",
         username="deepa@unomaha.edu",
         email="deepa@unomaha.edu",
         password="My-Strong-Test-Password-928!",
@@ -19,6 +21,8 @@ def test_user(db, django_user_model, client):
 @pytest.fixture
 def other_test_user(db, django_user_model, client):
     user = django_user_model.objects.create_user(
+        first_name="parker",
+        last_name="williams",
         username="parker@unomaha.edu",
         email="parker@unomaha.edu",
         password="My-Other-Test-Password-928!",
