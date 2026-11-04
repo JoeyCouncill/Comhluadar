@@ -5,7 +5,7 @@ from services.models import Listing
 
 
 class ServiceReview(models.Model):
-    service = models.ForeignKey(
+    listing = models.ForeignKey(
         Listing,
         on_delete=models.CASCADE,
         related_name="reviews",
@@ -13,7 +13,7 @@ class ServiceReview(models.Model):
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="service_reviews",
+        related_name="listing_reviews",
     )
     rating = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
@@ -24,14 +24,14 @@ class ServiceReview(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["service", "reviewer"],
-                name="unique_service_review",
+                fields=["listing", "reviewer"],
+                name="unique_listing_review",
             ),
             models.CheckConstraint(
                 condition=models.Q(rating__gte=1, rating__lte=5),
-                name="service_rating_between_1_and_5",
+                name="listing_rating_between_1_and_5",
             ),
         ]
 
     def __str__(self):
-        return f"Service {self.service_id}: {self.rating}/5"
+        return f"Service {self.listing_id}: {self.rating}/5"

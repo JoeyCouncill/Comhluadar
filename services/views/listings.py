@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import CreateServiceForm
 from django.contrib import messages
 from django.utils import timezone
-from services.forms import ListingForm
+from listings.forms import ListingForm
 
 def all_posts_view(request):
 	return render(request, 'all_posts_view.html')
@@ -12,9 +12,9 @@ def new_post(request):
 		form = CreateServiceForm(request.POST)
 
 		if form.is_valid():
-			service = form.save(commit=False)
-			service.author = request.user
-			service.save()
+			listing = form.save(commit=False)
+			listing.author = request.user
+			listing.save()
 			messages.success(request, 'Your post has been saved!\n'
 							 f'Post Type: {form.cleaned_data["listing_type"].capitalize()}\n'
 							 f'Title: {form.cleaned_data["title"]}\n'

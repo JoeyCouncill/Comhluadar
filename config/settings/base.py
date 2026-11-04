@@ -30,7 +30,7 @@ MIDDLEWARE = [
 
 LOGIN_URL = "user_login"
 
-ROOT_URLCONF = 'Comhluadar.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {

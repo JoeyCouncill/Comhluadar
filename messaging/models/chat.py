@@ -8,10 +8,10 @@ class Chat(models.Model):
         related_name="chats",
     )
 
-    ##allow chats to be tied to specific service offers/requests 
+    ##allow chats to be tied to specific listing offers/requests 
     # (we dont have to use/implement if we dont want just thought it would be nice)
-    service = models.ForeignKey(
-        "services.Service",
+    listing = models.ForeignKey(
+        "services.Listing",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
