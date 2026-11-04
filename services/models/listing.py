@@ -17,7 +17,7 @@ class Listing(models.Model):
 	author = models.ForeignKey(
 		settings.AUTH_USER_MODEL,
 		on_delete=models.CASCADE,
-		related_name="services",
+		related_name="listings",
 	)
 
 	listing_type = models.CharField(choices=ListingType.choices)

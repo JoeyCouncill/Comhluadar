@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from ..forms import CreateServiceForm
+from ..forms import CreateListingForm
 from django.contrib import messages
 from django.utils import timezone
-from listings.forms import ListingForm
+from services.forms import CreateListingForm
 
 def all_posts_view(request):
 	return render(request, 'all_posts_view.html')
 
 def new_post(request):
 	if request.method == 'POST':
-		form = CreateServiceForm(request.POST)
+		form = CreateListingForm(request.POST)
 
 		if form.is_valid():
 			listing = form.save(commit=False)
@@ -25,7 +25,7 @@ def new_post(request):
 		else:
 			messages.error(request, 'An error occurred. Please check your entry and try again.')
 	else:
-		form = CreateServiceForm()
+		form = CreateListingForm()
 
 	return render(request, 'new_post.html', {
 		'form': form,
