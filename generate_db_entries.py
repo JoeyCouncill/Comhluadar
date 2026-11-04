@@ -43,7 +43,9 @@ def generate_user_profiles(count=10):
 
         test_profiles = [Profile(
             user = user,
-            phone_number = fake.phone_number()
+            skills = random.choice(Profile.SKILL_CHOICES),
+            interests = fake.words(5, unique=True),
+            bio = fake.sentences(nb=5)[:500]
         )
         for user in test_users
         ]
