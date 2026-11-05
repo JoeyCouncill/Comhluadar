@@ -6,11 +6,9 @@ from .base import *
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["https://example.com", "https://www.example.com"]
+ALLOWED_HOSTS = ["3.139.58.17"]
+CSRF_TRUSTED_ORIGINS = ["https://3.139.58.17"]
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "static/"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = Path("/var/lib/comhluadar/media")
