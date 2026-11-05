@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
-from forms import CreateListingForm
-from models import Listing
+from services.forms import CreateListingForm
+from services.models import Listing
 
 from services.forms import CreateListingForm
 

@@ -5,13 +5,13 @@ import django
 #TODO: Reviews, messages
 
 # Ensure Django settings are properly loaded
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Comhluadar.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
 django.setup()
 
 # Import additional modules (Django has to be loaded before importing project models)
-from accounts.models import *
-from messaging.models import *
-from services.models import *
+from accounts.models.profile import *
+from messaging.models.chat import *
+from services.models.listing import *
 from faker import Faker
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password

@@ -28,7 +28,6 @@ def edit_profile(request):
             User.save(update_fields=["first_name", "last_name"])
             form.save()
 
-        messages.success(request, "Your profile has been updated.")
         return redirect("account_summary")
 
     return render(request, "edit_profile.html", {"form": form})
