@@ -6,3 +6,8 @@ Useful commands
 
     faker data:
         python generate_db_entries.py  
+    
+    update local virtual environment
+         python -m pip freeze > requirements.txt
+    update requirements.txt (update your local virtual environment first)
+        python -m pip freeze > requirements.txt
