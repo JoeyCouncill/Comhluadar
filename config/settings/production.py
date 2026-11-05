@@ -6,8 +6,16 @@ from .base import *
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = False
 
-ALLOWED_HOSTS = ["3.139.58.17"]
-CSRF_TRUSTED_ORIGINS = ["https://3.139.58.17"]
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ["DJANGO_ALLOWED_HOSTS"].split(",")
+    if host.strip()
+
+]
+
+CSRF_TRUSTED_ORIGINS = ["https://comhluadar.com",
+                        "www.comhluadar.com",
+                        ]
 
 STATIC_URL = "static/"
 
