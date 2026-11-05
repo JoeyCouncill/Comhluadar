@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='Service',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('listing_type', models.CharField(choices=[('offer', 'Offering a service'), ('request', 'Requesting a service')])),
+                ('listing_type', models.CharField(max_length=100,choices=[('offer', 'Offering a service'), ('request', 'Requesting a service')])),
                 ('title', models.CharField(max_length=200)),
                 ('description', models.TextField(blank=True)),
                 ('category', models.CharField(blank=True, choices=[('Tutoring', 'Tutoring'), ('Specialized Labor', 'Specialized Labor'), ('General Labor', 'General Labor')], max_length=50)),

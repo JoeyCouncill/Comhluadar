@@ -1,11 +1,25 @@
+from django.db.models import query
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Service
 from .forms import CreateServiceForm
 from django.contrib import messages
 from django.utils import timezone
+from django.db.models import Q
 
 def all_posts_view(request):
-	return render(request, 'all_posts_view.html')
+	query = request.GET.get('q', '').strip()
+	posts = Service.objects.all()
+
+	if query:
+		posts = posts.filter(
+			Q(listing_type__icontains=query) |
+			Q(title__icontains=query) |
+			Q(category__icontains=query) |
+			Q(description__icontains=query) |
+			Q(requestor__username__icontains=query)
+		)
+
+	return render(request, 'all_posts_view.html', {'posts': posts, 'query': query})
 
 def new_post(request):
 	if request.method == 'POST':
