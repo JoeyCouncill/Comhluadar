@@ -16,107 +16,104 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - name: Check out repository
-      - uses: actions/checkout@v6
+    - name: Check out repository
+      uses: actions/checkout@v6
 
-      - name: Set up Python
-      - uses: actions/setup-python@v6
-        with:
-            python-version: "3.13"
-            cache: pip
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.13"
+        cache: pip
 
-      - name: Install dependencies
-        run: python -m pip install -r requirements.txt
+    - name: Install dependencies
+      run: python -m pip install -r requirements.txt
 
-      - name: Check Django and migrations
-        run: |
-            python manage.py check
-            python manage.py makemigrations --check --dry-run
+    - name: Check Django and migrations
+      run: |
+        python manage.py check
+        python manage.py makemigrations --check --dry-run
 
-      - name: Run tests
-        run: xvfb-run -a python -m pytest -v
+    - name: Run tests
+      run: xvfb-run -a python -m pytest -v
 
-    deploy:
-        needs: test
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
-        concurrency:
-            group: production-deployment
-            cancel-in-progress: false
+    concurrency:
+      group: production-deployment
+      cancel-in-progress: false
 
-        env:
-            EC2_HOST: ${{ secrets.EC2_HOST }}
-            EC2_USER: ${{ secrets.EC2_USER }}
-            EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-            EC2_KNOWN_HOSTS: ${{ secrets.EC2_KNOWN_HOSTS }}
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      EC2_KNOWN_HOSTS: ${{ secrets.EC2_KNOWN_HOSTS }}
 
-        steps:
-          - name: Configure SSH
-            run: |
-                install -d -m 700 ~/.ssh
-                printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/deploy_key
-                chmod 600 ~/.ssh/deploy_key
-                printf '%s\n' "$EC2_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    steps:
+    - name: Configure SSH
+      run: |
+        install -d -m 700 ~/.ssh
+        printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+        printf '%s\n' "$EC2_KNOWN_HOSTS" > ~/.ssh/known_hosts
 
-          - name: Deploy tested commit
-            run: |
-                ssh -i ~/.ssh/deploy_key \
-                -o BatchMode=yes \
-                -o StrictHostKeyChecking=yes \
-                -o ConnectTimeout=15 \
-                "$EC2_USER@$EC2_HOST" \
-                "bash -s -- '$GITHUB_SHA'" <<'DEPLOY'
-                set -euo pipefail
+    - name: Deploy tested commit
+      run: |
+        ssh -i ~/.ssh/deploy_key \
+        -o BatchMode=yes \
+        -o StrictHostKeyChecking=yes \
+        -o ConnectTimeout=15 \
+        "$EC2_USER@$EC2_HOST" \
+        "bash -s -- '$GITHUB_SHA'" <<'DEPLOY'
+        set -euo pipefail
 
-                # REPLACE these four values with your actual server configuration.
-                APP_DIR=/home/ubuntu/Comhluadar
-                VENV_DIR=/home/ubuntu/Comhluadar/.venv
-                ENV_FILE=/etc/comhluadar/comhluadar.env
-                SERVICE=gunicorn.service
+        APP_DIR=/home/ubuntu/Comhluadar
+        VENV_DIR=/home/ubuntu/Comhluadar/.venv
+        ENV_FILE=/etc/comhluadar/comhluadar.env
+        SERVICE=gunicorn.service
 
-                cd "$APP_DIR"
+        cd "$APP_DIR"
 
-                # Prevent overlapping deployments and refuse tracked local edits.
-                exec 9>.git/deploy.lock
-                flock -n 9
+        exec 9>.git/deploy.lock
+        flock -n 9
 
-                if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
-                    echo "Tracked files have local changes. Deployment stopped."
-                    exit 1
-                fi
+        if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+          echo "Tracked files have local changes. Deployment stopped."
+          exit 1
+        fi
 
-                test "$(git branch --show-current)" = main
-                test -x "$VENV_DIR/bin/python"
-                test -r "$ENV_FILE"
-                sudo -n /usr/bin/systemctl is-active "$SERVICE"
+        test "$(git branch --show-current)" = main
+        test -x "$VENV_DIR/bin/python"
+        test -r "$ENV_FILE"
+        sudo -n /usr/bin/systemctl is-active "$SERVICE"
 
-                # The environment file must contain Bash-compatible KEY=value entries.
-                set -a
-                source "$ENV_FILE"
-                set +a
-                export DJANGO_SETTINGS_MODULE=config.settings.production
+        set -a
+        source "$ENV_FILE"
+        set +a
+        export DJANGO_SETTINGS_MODULE=config.settings.production
 
-                git fetch origin main
-                git merge-base --is-ancestor "$1" FETCH_HEAD
-                git merge-base --is-ancestor HEAD "$1"
-                git merge --ff-only "$1"
+          git fetch origin main
+          git merge-base --is-ancestor "$1" FETCH_HEAD
+          git merge-base --is-ancestor HEAD "$1"
+          git merge --ff-only "$1"
 
-                "$VENV_DIR/bin/python" -m pip install -r requirements.txt
-                "$VENV_DIR/bin/python" manage.py check
-                "$VENV_DIR/bin/python" manage.py migrate --noinput
-                "$VENV_DIR/bin/python" manage.py collectstatic --noinput
+          "$VENV_DIR/bin/python" -m pip install -r requirements.txt
+          "$VENV_DIR/bin/python" manage.py check
+          "$VENV_DIR/bin/python" manage.py migrate --noinput
+          "$VENV_DIR/bin/python" manage.py collectstatic --noinput
 
-                sudo -n /usr/bin/systemctl restart "$SERVICE"
-                sudo -n /usr/bin/systemctl is-active "$SERVICE"
+          sudo -n /usr/bin/systemctl restart "$SERVICE"
+          sudo -n /usr/bin/systemctl is-active "$SERVICE"
 
-                curl --fail --silent --show-error \
-                    --retry 5 --retry-all-errors --retry-delay 3 \
-                    --connect-timeout 10 --max-time 30 \
-                    --output /dev/null https://comhluadar.com/
-                DEPLOY
+          curl --fail --silent --show-error \
+            --retry 5 --retry-all-errors --retry-delay 3 \
+            --connect-timeout 10 --max-time 30 \
+            --output /dev/null https://comhluadar.com/
+          DEPLOY
 
-              - name: Remove SSH key
-                if: always()
-                run: rm -f ~/.ssh/deploy_key
+          - name: Remove SSH key
+            if: always()
+            run: rm -f ~/.ssh/deploy_key
