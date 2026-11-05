@@ -36,7 +36,7 @@ def test_create_account_page_links_to_login(client):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "page",
-    ["account_summary", "all_posts_view", "new_post", "inbox"],
+    ["account_summary", "all_listings_view", "new_listing", "inbox"],
 )
 
 
@@ -53,7 +53,7 @@ def test_protected_pages_redirect_anonymous_users(client, page, method):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "page",
-    ["account_summary", "all_posts_view", "new_post", "inbox"],
+    ["account_summary", "all_listings_view", "new_listing", "inbox"],
 )
 def test_protected_pages_allow_logged_in_users(
     client, django_user_model, page

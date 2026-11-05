@@ -1,5 +1,5 @@
 {% extends 'base_service.html' %}
-{% block title %}New Post{% endblock %}
+{% block title %}New listing{% endblock %}
 {% block content %}
 <div class="container mt-4">
   <h1 class="mb-4 text-primary">Offer or Request Services</h1>
@@ -14,17 +14,17 @@
       {% endfor %}
     {% endif %}
 
-  <!-- New Post Form -->
+  <!-- New listing Form -->
   <form method="POST" class="border p-4 rounded bg-light shadow-sm">
     {% csrf_token %}
 
     <div class="mb-3">
-      <label for="listing_type" class="form-label">
+      <label for="service_type" class="form-label">
         Service Type
       </label>
       <select
-        id="listing_type"
-        name="listing_type"
+        id="service_type"
+        name="service_type"
         class="form-select"
         required
       >
@@ -72,7 +72,7 @@
       />
     </div>
     <button type="submit" class="btn btn-success">
-      Post Service Request
+      list Service Request
     </button>
   </form>
 </div>

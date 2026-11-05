@@ -76,7 +76,7 @@ def generate_listings(count=10):
 
         test_services = [Listing(
             author = random.choice(users),
-            listing_type = random.choice(Listing.ListingType.values),
+            service_type = random.choice(Listing.ServiceType.values),
             title = fake.sentence(nb_words=10),
             description = fake.paragraph(),
             category = random.choice(service_types)[0],

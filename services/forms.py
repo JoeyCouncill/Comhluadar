@@ -5,7 +5,7 @@ from .models import Listing
 class CreateListingForm(forms.ModelForm):
 	class Meta:
 		model = Listing
-		fields = ['listing_type', 'title', 'category', 'date']
+		fields = ['service_type', 'title', 'category', 'date']
 
 	def clean_date(self):
 		date = self.cleaned_data['date']

@@ -8,9 +8,9 @@ from services.models import Listing
 from django.contrib.messages import get_messages
 
 
-def valid_post_data(**overrides):
+def valid_listing_data(**overrides):
     data = {
-        "listing_type": "offer",
+        "service_type": "offer",
         "title": "Linear Algebra tutoring",
         "category": "Tutoring",
         "date": (timezone.localdate() + timedelta(days=1)).isoformat(),
@@ -19,41 +19,41 @@ def valid_post_data(**overrides):
     return data
 
 @pytest.mark.django_db
-def test_new_post_page_shows_form_fields(client, test_user):
-    response = client.get(reverse("new_post"))
+def test_new_listing_page_shows_form_fields(client, test_user):
+    response = client.get(reverse("new_listing"))
 
     assert response.status_code == 200
     form = response.context["form"]
-    assert list(form.fields) == ["listing_type", "title", "category", "date"]
+    assert list(form.fields) == ["service_type", "title", "category", "date"]
     assert response.context["today"] == timezone.localdate().isoformat()
 
 
 @pytest.mark.django_db
-def test_valid_post_creates_listing_for_current_user(client, test_user):
-    response = client.post(reverse("new_post"), valid_post_data())
+def test_valid_listing_creates_listing_for_current_user(client, test_user):
+    response = client.post(reverse("new_listing"), valid_listing_data())
 
     assert response.status_code == 302
-    assert response.url == reverse("new_post")
+    assert response.url == reverse("new_listing")
 
     listing = Listing.objects.get()
     assert listing.author == test_user
     assert listing.title == "Linear Algebra tutoring"
-    assert listing.listing_type == "offer"
+    assert listing.service_type == "offer"
 
 @pytest.mark.django_db
-def test_valid_post_shows_success_message(client, test_user):
-    response = client.post(reverse("new_post"), valid_post_data())
+def test_valid_listing_shows_success_message(client, test_user):
+    response = client.post(reverse("new_listing"), valid_listing_data())
 
     messages = [str(i) for i in get_messages(response.wsgi_request)]
     assert len(messages) == 1
-    assert "Your post has been saved!" in messages[0]
+    assert "Your listing has been saved!" in messages[0]
     assert "Linear Algebra tutoring" in messages[0]
 
 @pytest.mark.django_db
 def test_past_date_is_rejected(client, test_user):
     yesterday = (timezone.localdate() - timedelta(days=1)).isoformat()
 
-    response = client.post(reverse("new_post"), valid_post_data(date=yesterday))
+    response = client.post(reverse("new_listing"), valid_listing_data(date=yesterday))
 
     assert response.status_code == 200
     assert "Service date cannot be in the past." in response.context["form"].errors["date"]
@@ -66,18 +66,18 @@ def test_past_date_is_rejected(client, test_user):
 def test_today_is_accepted(client, test_user):
     today = timezone.localdate().isoformat()
 
-    response = client.post(reverse("new_post"), valid_post_data(date=today))
+    response = client.post(reverse("new_listing"), valid_listing_data(date=today))
 
     assert response.status_code == 302
     assert Listing.objects.count() == 1
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("missing_field", ["listing_type", "title", "date"])
+@pytest.mark.parametrize("missing_field", ["service_type", "title", "date"])
 def test_required_fields_are_enforced(client, test_user, missing_field):
-    data = valid_post_data()
+    data = valid_listing_data()
     data.pop(missing_field)
 
-    response = client.post(reverse("new_post"), data)
+    response = client.post(reverse("new_listing"), data)
 
     assert response.status_code == 200
     assert missing_field in response.context["form"].errors
@@ -85,18 +85,18 @@ def test_required_fields_are_enforced(client, test_user, missing_field):
 
 @pytest.mark.django_db
 def test_category_is_optional(client, test_user):
-    data = valid_post_data()
+    data = valid_listing_data()
     data.pop("category")
 
-    response = client.post(reverse("new_post"), data)
+    response = client.post(reverse("new_listing"), data)
 
     assert response.status_code == 302
     assert Listing.objects.count() == 1
 
 @pytest.mark.django_db
-def test_invalid_listing_type_is_rejected(client, test_user):
-    response = client.post(reverse("new_post"), valid_post_data(listing_type="invalidtype"))
+def test_invalid_service_type_is_rejected(client, test_user):
+    response = client.post(reverse("new_listing"), valid_listing_data(service_type="invalidtype"))
 
     assert response.status_code == 200
-    assert "listing_type" in response.context["form"].errors
+    assert "service_type" in response.context["form"].errors
     assert Listing.objects.count() == 0

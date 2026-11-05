@@ -1,26 +1,26 @@
-class TestBrowsePosts:
+class TestBrowselistings:
     """
-    Tests for Browse Posts page.
+    Tests for Browse listings page.
     """
-    def test_browse_posts_access_attempt_not_logged_in(self, browser, live_server) -> None:
+    def test_browse_listings_access_attempt_not_logged_in(self, browser, live_server) -> None:
         """
-        Attempting to access the 'browse posts' page directly while not logged in redirects to log in page.
+        Attempting to access the 'browse listings' page directly while not logged in redirects to log in page.
         """
-        browser.get(live_server.url + '/all_posts_view/')
+        browser.get(live_server.url + '/all_listings_view/')
 
         assert '/user_login/' in browser.current_url
         
 
-class TestNewPost:
+class TestNewlisting:
     """
-    Tests for New Post page
+    Tests for New listing page
     """
 
-    def test_new_post_access_attempt_not_logged_in(self, browser, live_server) -> None:
+    def test_new_listing_access_attempt_not_logged_in(self, browser, live_server) -> None:
         """
-        Attempting to access the 'new post' page directly while not logged in redirects to log in page.
+        Attempting to access the 'new listing' page directly while not logged in redirects to log in page.
         """
-        browser.get(live_server.url + '/services/new_post')
+        browser.get(live_server.url + '/services/new_listing')
 
         assert '/user_login/' in browser.current_url
         

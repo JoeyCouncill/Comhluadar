@@ -10,7 +10,7 @@ service_types = [
 	]
 
 class Listing(models.Model):
-	class ListingType(models.TextChoices):
+	class ServiceType(models.TextChoices):
 		OFFER = "offer", "Offering a service"
 		REQUEST = "request", "Requesting a service"
 
@@ -20,7 +20,7 @@ class Listing(models.Model):
 		related_name="listings",
 	)
 
-	listing_type = models.CharField(choices=ListingType.choices)
+	service_type = models.CharField(choices=ServiceType.choices)
 
 	title = models.CharField(max_length=200)
 	description = models.TextField(blank=True)
