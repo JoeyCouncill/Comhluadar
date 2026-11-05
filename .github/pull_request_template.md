@@ -9,6 +9,8 @@
 <!-- in addition to requiring one approval, the following checks must be completed successfully before merging. -->
 - [ ] The project deploys and runs properly on a local environment.
 - [ ] The project can be deployed to AWS and runs properly.
-- [ ] Comprehensive unit tests for the change have been made in pytest(this may change/be removed).
+- [ ] Comprehensive unit tests for the change have been made in pytest
 - [ ] All pytest unit tests pass successfully.
 - [ ] All Selenium tests pass successfully.
+- [ ] Any new dependencies are added to requirements.txt.
+- [ ] Any new commands are added to readme.md.
