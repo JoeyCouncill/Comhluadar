@@ -1,10 +1,16 @@
+import os
 from .base import *
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-q*459#xeb*7u90mz+j+ji2cm3x3&zn)&!eh6_4(soy&$$e3(!p'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["https://example.com", "https://www.example.com"]
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path("/var/lib/comhluadar/media")
