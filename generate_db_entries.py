@@ -29,15 +29,18 @@ def generate_user_profiles(count=10):
     print('Generating Test User Profiles...')
 
     try:
-        test_users = [User(
-            username = fake.unique.user_name(),
-            email = fake.unique.email(),
-            password = HASHED_PASSWORD,
-            first_name = fake.first_name(),
-            last_name = fake.last_name()
+        test_users = []
+        for i in range(count):
+            email = fake.unique.email()
+            test_users.append(
+                User(
+                username = email,
+                email = email,
+                password = HASHED_PASSWORD,
+                first_name = fake.first_name(),
+                last_name = fake.last_name()
+            )
         )
-        for i in range(count)
-        ]
 
         User.objects.bulk_create(test_users)
 
