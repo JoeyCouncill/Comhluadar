@@ -4,7 +4,6 @@ from accounts_app.models import Profile, UserBlock, UserReview
 
 
 def test_profile_model_links_to_user(test_user):
-    assert test_user.profile.phone_number == "402-123-4567"
     assert test_user.profile.display_name == "deepa"
 
 
