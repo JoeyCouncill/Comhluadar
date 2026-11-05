@@ -221,4 +221,5 @@ __marimo__/
 
 /media/
 /staticfiles/
-
+github-actions-deploy
+github-actions-deploy.pub
