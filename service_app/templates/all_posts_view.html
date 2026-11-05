@@ -21,7 +21,7 @@
             </div>
             <div class="card-footer d-flex justify-content-between align-items-center">
               <small class="text-muted">
-                {{ post.author.username }} &middot; {{ post.created_at|date:"M j, Y" }}
+                {{ post.author.profile.display_name }} &middot; {{ post.created_at|date:"M j, Y" }}
               </small>
               <a href="#" class="btn btn-sm btn-outline-primary">View</a>
             </div>

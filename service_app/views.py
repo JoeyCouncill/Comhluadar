@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.core.paginator import Paginator
 
 def all_posts_view(request):
-	posts = Service.objects.all().select_related('author').order_by('-created_at')
+	posts = Service.objects.all().select_related('author__profile').order_by('-created_at')
 	paginator = Paginator(posts, 12)
 	page_obj = paginator.get_page(request.GET.get('page'))
 	return render(request, 'all_posts_view.html', {'page_obj': page_obj})
