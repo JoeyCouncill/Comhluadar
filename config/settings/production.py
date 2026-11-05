@@ -10,12 +10,13 @@ ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ["DJANGO_ALLOWED_HOSTS"].split(",")
     if host.strip()
+    ]
 
-]
-
-CSRF_TRUSTED_ORIGINS = ["https://comhluadar.com",
-                        "www.comhluadar.com",
-                        ]
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ["DJANGO_CSRF_TRUSTED_ORIGINS"].split(",")
+    if origin.strip()
+    ]
 
 STATIC_URL = "static/"
 
