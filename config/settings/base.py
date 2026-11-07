@@ -5,15 +5,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 INSTALLED_APPS = [
+    'accounts',
+    'services',
+    'messaging',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',
-    'services',
-    'messaging',
 ]
 
 MIDDLEWARE = [
@@ -28,7 +28,7 @@ MIDDLEWARE = [
 ]
 
 
-LOGIN_URL = "user_login"
+LOGIN_URL = "login"
 
 ROOT_URLCONF = 'config.urls'
 

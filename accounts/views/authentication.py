@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
-from django.contrib.auth import authenticate, get_user_model, login
+from django.contrib.auth import authenticate, get_user_model, login as auth_login
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_not_required
 from django.core.exceptions import ValidationError
@@ -16,7 +16,7 @@ def hello_world(request):
 
 
 @login_not_required
-def user_login(request):
+def login(request):
     if request.method == "POST":
         email = request.POST.get("email", "").strip().lower()
         password = request.POST.get("password", "")
@@ -28,15 +28,15 @@ def user_login(request):
         )
 
         if user is not None:
-            login(request, user)
+            auth_login(request, user)
             return redirect("account_summary")
 
         messages.error(request, "Invalid email or password.")
     
-    return render(request, "user_login.html")
+    return render(request, "registration/login.html")
 
 @login_not_required
-def create_account(request):
+def signup(request):
     if request.method == "POST":
         firstName = request.POST.get("firstName", "").strip()
         lastName = request.POST.get("lastName", "").strip()
@@ -75,10 +75,10 @@ def create_account(request):
             except IntegrityError:
                 errors.append("An account with this email already exists.")
             else:
-                login(request, user)
+                auth_login(request, user)
                 return redirect("account_summary")
         for error in errors:
             messages.error(request, error)
 
-    return render(request, "create_account.html")
+    return render(request, "registration/signup.html")
 

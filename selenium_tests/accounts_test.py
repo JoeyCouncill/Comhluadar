@@ -12,7 +12,7 @@ class TestLogin:
         """
         Log In page loads correctly
         """
-        browser.get(live_server.url + '/user_login/')
+        browser.get(live_server.url + '/login/')
 
         assert 'Log In' in browser.title
         assert browser.find_element(By.TAG_NAME, 'h1').is_displayed()
@@ -23,7 +23,7 @@ class TestLogin:
         """
         Username/Email and password fields and Log In button exist.
         """
-        browser.get(live_server.url + '/user_login/')
+        browser.get(live_server.url + '/login/')
         username = browser.find_element(By.NAME, 'email')
         password = browser.find_element(By.NAME, 'password')
         login_button = browser.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
@@ -33,14 +33,14 @@ class TestLogin:
         assert login_button.is_displayed()
         
 
-    def test_login_to_create_account_link(self, browser, live_server) -> None:
+    def test_login_to_signup_link(self, browser, live_server) -> None:
         """
         'Create Account' link from Log In page correctly navigates to 'create account' page.
         """
-        browser.get(live_server.url + '/user_login/')
+        browser.get(live_server.url + '/login/')
         browser.find_element(By.LINK_TEXT, 'Create Account').click()
 
-        assert browser.current_url.endswith('/create_account/')
+        assert browser.current_url.endswith('/signup/')
         assert 'Comhluadar | Create Account' in browser.title
         assert browser.find_element(By.NAME, 'email').is_displayed()
         
@@ -52,14 +52,14 @@ class TestLogin:
         """
         Submitting an invalid username displays an error message and remains on the login page
         """
-        browser.get(live_server.url + '/user_login/')
+        browser.get(live_server.url + '/login/')
         assert not browser.find_elements(By.CSS_SELECTOR, '.alert')
 
         browser.find_element(By.NAME, 'email').send_keys('testuser@unomaha.edu')
         browser.find_element(By.NAME, 'password').send_keys('t3stp4ssw0rd')
         browser.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
-        assert browser.current_url.endswith('/user_login/')
+        assert browser.current_url.endswith('/login/')
         alert = WebDriverWait(browser, 10).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, ".alert"))
             )
@@ -73,10 +73,10 @@ class TestLogin:
         """
         A submitted empty form is rejected and remains on the login page
         """
-        browser.get(live_server.url + '/user_login/')
+        browser.get(live_server.url + '/login/')
         browser.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
-        assert browser.current_url.endswith('/user_login/')
+        assert browser.current_url.endswith('/login/')
         
 
     def test_login_valid(self, browser, live_server):
@@ -87,21 +87,21 @@ class TestCreateAccount:
     """
     Tests for Comhluadar 'Create Account' page. Validates page loads and various account creations scenarios.
     """
-    def test_create_account_page_loads(self, browser, live_server) -> None:
+    def test_signup_page_loads(self, browser, live_server) -> None:
         """
         Create account page loads correctly
         """
-        browser.get(live_server.url + '/create_account/')
+        browser.get(live_server.url + '/signup/')
 
         assert 'Create Account' in browser.title
         assert 'Create User Account' in browser.page_source
         
 
-    def test_create_account_fields_exist(self, browser, live_server) -> None:
+    def test_signup_fields_exist(self, browser, live_server) -> None:
         """
         Create account fields exist upon page loading
         """
-        browser.get(live_server.url + '/create_account/')
+        browser.get(live_server.url + '/signup/')
         firstName = browser.find_element(By.NAME, 'firstName')
         lastName = browser.find_element(By.NAME, 'lastName')
         email = browser.find_element(By.NAME, 'email')
@@ -117,21 +117,21 @@ class TestCreateAccount:
         assert create_button.is_displayed()
         
 
-    def test_create_account_to_login_link(self, browser, live_server) -> None:
+    def test_signup_to_login_link(self, browser, live_server) -> None:
         """
         Clicking Log In link navigates to the user login page
         """
-        browser.get(live_server.url + '/create_account/')
+        browser.get(live_server.url + '/signup/')
         browser.find_element(By.LINK_TEXT, 'Log In').click()
 
-        assert browser.current_url.endswith('/user_login/')
+        assert browser.current_url.endswith('/login/')
         
 
-    def test_create_account_valid(self, browser, live_server) -> None:
+    def test_signup_valid(self, browser, live_server) -> None:
         """
         Submitting valid new account details navigates directly to the 'account summary' page
         """
-        browser.get(live_server.url + '/create_account/')
+        browser.get(live_server.url + '/signup/')
         
         browser.find_element(By.NAME, 'firstName').send_keys('FirstNameTest1')
         browser.find_element(By.NAME, 'lastName').send_keys('LastNameTest1')
@@ -146,11 +146,11 @@ class TestCreateAccount:
         assert browser.current_url.endswith('/account_summary/')
         
 
-    def test_create_account_passwords_mismatch(self, browser, live_server) -> None:
+    def test_signup_passwords_mismatch(self, browser, live_server) -> None:
         """
         Attempting to create an account with mismatched passwords stays on create account page
         """
-        browser.get(live_server.url + '/create_account/')
+        browser.get(live_server.url + '/signup/')
         assert not browser.find_element(By.ID, 'password-error').is_displayed()
 
         browser.find_element(By.NAME, 'firstName').send_keys('FirstNameTest2')
@@ -160,14 +160,14 @@ class TestCreateAccount:
         browser.find_element(By.NAME, 'password2').send_keys('ComhluadarTest2')
         browser.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
-        assert browser.current_url.endswith('/create_account/')
+        assert browser.current_url.endswith('/signup/')
         assert browser.find_element(By.ID, 'password-error').is_displayed()
         
 
-    def test_create_account_email_already_in_use(self, live_server):
+    def test_signup_email_already_in_use(self, live_server):
         pytest.skip('Test not written yet. Awaiting user model.')
 
-    def test_create_account_invalid_email_domain(self, live_server):
+    def test_signup_invalid_email_domain(self, live_server):
         pytest.skip('Test not written yet. Awaiting email domain validation.')
 
 class TestAccountSummary:
@@ -181,5 +181,5 @@ class TestAccountSummary:
         """
         browser.get(live_server.url + '/account_summary/')
 
-        assert '/user_login/' in browser.current_url
+        assert '/login/' in browser.current_url
         

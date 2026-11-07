@@ -24,15 +24,15 @@ class TestWelcome:
         browser.get(live_server.url)
         browser.find_element(By.LINK_TEXT, 'Log in').click()
 
-        assert browser.current_url.endswith('/user_login/')
+        assert browser.current_url.endswith('/login/')
         assert 'Comhluadar | Log In' in browser.title
 
-    def test_welcome_page_create_account_button(self, browser, live_server) -> None:
+    def test_welcome_page_signup_button(self, browser, live_server) -> None:
         """
         Welcome page 'Create Account' button navigates to create account page.
         """
         browser.get(live_server.url)
         browser.find_element(By.LINK_TEXT, 'Create Account').click()
 
-        assert browser.current_url.endswith('/create_account/')
+        assert browser.current_url.endswith('/signup/')
         assert 'Comhluadar | Create Account' in browser.title

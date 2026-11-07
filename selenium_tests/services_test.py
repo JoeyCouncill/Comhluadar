@@ -8,7 +8,7 @@ class TestBrowselistings:
         """
         browser.get(live_server.url + '/all_listings_view/')
 
-        assert '/user_login/' in browser.current_url
+        assert '/login/' in browser.current_url
         
 
 class TestNewlisting:
@@ -22,5 +22,5 @@ class TestNewlisting:
         """
         browser.get(live_server.url + '/services/new_listing')
 
-        assert '/user_login/' in browser.current_url
+        assert '/login/' in browser.current_url
         

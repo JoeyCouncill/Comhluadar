@@ -21,3 +21,19 @@ CSRF_TRUSTED_ORIGINS = [
 STATIC_URL = "static/"
 
 MEDIA_URL = "/media/"
+
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": os.environ["EMAIL_HOST"],
+            "port": 587,
+            "username": os.environ["EMAIL_HOST_USER"],
+            "password": os.environ["EMAIL_HOST_PASSWORD"],
+            "use_tls": True,
+            "timeout": 15,
+        },
+    },
+}
+
+DEFAULT_FROM_EMAIL = os.environ["DEFAULT_FROM_EMAIL"]
