@@ -12,7 +12,7 @@ class TestLogin:
         """
         Log In page loads correctly
         """
-        browser.get(live_server.url + '/login/')
+        browser.get(live_server.url + '/registration/login/')
 
         assert 'Log In' in browser.title
         assert browser.find_element(By.TAG_NAME, 'h1').is_displayed()
@@ -23,7 +23,7 @@ class TestLogin:
         """
         Username/Email and password fields and Log In button exist.
         """
-        browser.get(live_server.url + '/login/')
+        browser.get(live_server.url + '/registration/login/')
         username = browser.find_element(By.NAME, 'email')
         password = browser.find_element(By.NAME, 'password')
         login_button = browser.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
@@ -37,7 +37,7 @@ class TestLogin:
         """
         'Create Account' link from Log In page correctly navigates to 'create account' page.
         """
-        browser.get(live_server.url + '/login/')
+        browser.get(live_server.url + '/registration/login/')
         browser.find_element(By.LINK_TEXT, 'Create Account').click()
 
         assert browser.current_url.endswith('/signup/')
@@ -52,7 +52,7 @@ class TestLogin:
         """
         Submitting an invalid username displays an error message and remains on the login page
         """
-        browser.get(live_server.url + '/login/')
+        browser.get(live_server.url + '/registration/login/')
         assert not browser.find_elements(By.CSS_SELECTOR, '.alert')
 
         browser.find_element(By.NAME, 'email').send_keys('testuser@unomaha.edu')
@@ -73,7 +73,7 @@ class TestLogin:
         """
         A submitted empty form is rejected and remains on the login page
         """
-        browser.get(live_server.url + '/login/')
+        browser.get(live_server.url + '/registration/login/')
         browser.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
         assert browser.current_url.endswith('/login/')
@@ -91,7 +91,7 @@ class TestCreateAccount:
         """
         Create account page loads correctly
         """
-        browser.get(live_server.url + '/signup/')
+        browser.get(live_server.url + '/registration/signup/')
 
         assert 'Create Account' in browser.title
         assert 'Create User Account' in browser.page_source
@@ -101,7 +101,7 @@ class TestCreateAccount:
         """
         Create account fields exist upon page loading
         """
-        browser.get(live_server.url + '/signup/')
+        browser.get(live_server.url + '/registration/signup/')
         firstName = browser.find_element(By.NAME, 'firstName')
         lastName = browser.find_element(By.NAME, 'lastName')
         email = browser.find_element(By.NAME, 'email')
@@ -121,7 +121,7 @@ class TestCreateAccount:
         """
         Clicking Log In link navigates to the user login page
         """
-        browser.get(live_server.url + '/signup/')
+        browser.get(live_server.url + '/registration/signup/')
         browser.find_element(By.LINK_TEXT, 'Log In').click()
 
         assert browser.current_url.endswith('/login/')
@@ -131,7 +131,7 @@ class TestCreateAccount:
         """
         Submitting valid new account details navigates directly to the 'account summary' page
         """
-        browser.get(live_server.url + '/signup/')
+        browser.get(live_server.url + '/registration/signup/')
         
         browser.find_element(By.NAME, 'firstName').send_keys('FirstNameTest1')
         browser.find_element(By.NAME, 'lastName').send_keys('LastNameTest1')
@@ -150,7 +150,7 @@ class TestCreateAccount:
         """
         Attempting to create an account with mismatched passwords stays on create account page
         """
-        browser.get(live_server.url + '/signup/')
+        browser.get(live_server.url + '/registration/signup/')
         assert not browser.find_element(By.ID, 'password-error').is_displayed()
 
         browser.find_element(By.NAME, 'firstName').send_keys('FirstNameTest2')
