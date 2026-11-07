@@ -11,4 +11,4 @@ class TestInbox:
         """
         browser.get(live_server.url + '/inbox/')
 
-        assert '/user_login/' in browser.current_url
+        assert '/login/' in browser.current_url
