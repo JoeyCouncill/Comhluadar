@@ -4,4 +4,5 @@ from .views import *
 urlpatterns = [
 	path('all_posts_view/', all_posts_view, name='all_posts_view'),
 	path('service/new_post', new_post, name='new_post'),
+	path('post/<int:post_id>', post_detail, name='post_detail'),
 ]

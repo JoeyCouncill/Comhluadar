@@ -5,11 +5,33 @@ from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
 
+SORT_OPTIONS = {
+	'posted_new': '-created_at',
+	'posted_old': 'created_at',
+	'service_soon': 'date',
+	'service_late': '-date',
+}
+
 def all_posts_view(request):
-	posts = Service.objects.all().select_related('author__profile').order_by('-created_at')
+	posts = Service.objects.all().select_related('author__profile')
+
+	listing_type = request.GET.get('type', '')
+	category = request.GET.get('category', '')
+	sort = request.GET.get('sort', 'posted_new')
+
+	if listing_type in ('offer', 'request'):
+		posts = posts.filter(listing_type=listing_type)
+	if category:
+		posts = posts.filter(category=category)
+
+	posts = posts.order_by(SORT_OPTIONS.get(sort, '-created_at'))
+
 	paginator = Paginator(posts, 12)
 	page_obj = paginator.get_page(request.GET.get('page'))
-	return render(request, 'all_posts_view.html', {'page_obj': page_obj})
+	return render(request, 'all_posts_view.html', {
+		'page_obj': page_obj,
+		'categories': Service._meta.get_field('category').choices,
+	})
 
 def new_post(request):
 	if request.method == 'POST':
@@ -35,3 +57,7 @@ def new_post(request):
 		'form': form,
 		'today': timezone.localdate().isoformat(),
 	})
+
+def post_detail(request, post_id):
+	post = get_object_or_404(Service.objects.select_related('author__profile'), pk=post_id)
+	return render(request, 'post_detail.html', {'post': post})

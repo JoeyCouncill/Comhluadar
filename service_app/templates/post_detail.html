@@ -1,0 +1,29 @@
+{% extends 'base_service.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<div class="container mt-4" style="max-width: 720px;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <span class="bade {% if post.listing_type == 'offer' %}bg-success{% else %}bg-warning text-dark{% endif %} mb-2">
+                {{ post.get_listing_type_display }}
+            </span>
+            <h1 class="h3 card-title">{{ post.title }}</h1>
+            <h6 class="card-subtitle mb-3 text-muted">{{ post.get_category_display }}</h6>
+
+            <p class="card-text" style="white-space: pre-line;">{{ post.description }}</p>
+
+            <hr>
+            <p class="mb-1"><strong>Service date:</strong> {{ post.date|date:"F j, Y" }}</p>
+            <p class="mb-1"><strong>Posted by:</strong> {{ post.author.profile.display_name }}</p>
+            <p class="mb-0"><strong>Posted on:</strong> {{ post.created_at|date:"M j, Y" }}</p>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary">Back</a>
+            <button type="button" class="btn btn-primary">
+                {% if post.listing_type == 'offer' %}Accept this offer{% else %}Accept this request{% endif %}
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
