@@ -2,14 +2,43 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_not_required
 from django.db import transaction
+from django.db.models import Avg
+
 from accounts.forms import EditProfileForm
+from accounts.models import UserReview
+
 
 @login_not_required
 def front_page(request):
-	return render(request, "index.html")
+    return render(request, "index.html")
+
 
 def account_summary(request):
-    return render(request, "account_summary.html")
+    reviews = (
+        UserReview.objects
+        .filter(reviewed_user=request.user)
+        .select_related("reviewer")
+        .order_by("-created_at")
+    )
+
+    average_rating = reviews.aggregate(
+        average=Avg("rating")
+    )["average"]
+
+    review_count = reviews.count()
+
+    context = {
+        "reviews": reviews,
+        "average_rating": average_rating,
+        "review_count": review_count,
+    }
+
+    return render(
+        request,
+        "account_summary.html",
+        context,
+    )
+
 
 def edit_profile(request):
     User = request.user
