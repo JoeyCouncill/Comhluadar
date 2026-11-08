@@ -1,15 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Service
-from .forms import ServiceForm
+from .forms import CreateServiceForm
 from django.contrib import messages
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 def all_posts_view(request):
-	return render(request, 'all_posts_view.html')
+	posts = Service.objects.all().select_related('author__profile').order_by('-created_at')
+	paginator = Paginator(posts, 12)
+	page_obj = paginator.get_page(request.GET.get('page'))
+	return render(request, 'all_posts_view.html', {'page_obj': page_obj})
 
 def new_post(request):
 	if request.method == 'POST':
-		form = ServiceForm(request.POST)
+		form = CreateServiceForm(request.POST)
 
 		if form.is_valid():
 			service = form.save(commit=False)
@@ -25,7 +29,7 @@ def new_post(request):
 		else:
 			messages.error(request, 'An error occurred. Please check your entry and try again.')
 	else:
-		form = ServiceForm()
+		form = CreateServiceForm()
 
 	return render(request, 'new_post.html', {
 		'form': form,
