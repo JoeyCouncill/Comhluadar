@@ -202,8 +202,8 @@ def test_sort_listing_date_soonest_and_latest(client, test_user):
     make_test_post(test_user, title="Late", date=datetime.date(2027, 11, 1))
     make_test_post(test_user, title="Soon", date=datetime.date(2027, 3, 1))
 
-    soon = client.get(reverse("all_listings_view"), {"sort": "listing_soon"})
-    late = client.get(reverse("all_listings_view"), {"sort": "listing_late"})
+    soon = client.get(reverse("all_listings_view"), {"sort": "service_soon"})
+    late = client.get(reverse("all_listings_view"), {"sort": "service_late"})
 
     assert get_titles(soon) == ["Soon", "Late"]
     assert get_titles(late) == ["Late", "Soon"]
