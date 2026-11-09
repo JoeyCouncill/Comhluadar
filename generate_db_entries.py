@@ -5,13 +5,13 @@ import django
 #TODO: Reviews, messages
 
 # Ensure Django settings are properly loaded
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Comhluadar.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
 django.setup()
 
 # Import additional modules (Django has to be loaded before importing project models)
-from accounts_app.models import *
-from message_app.models import *
-from service_app.models import *
+from accounts.models.profile import *
+from messaging.models.chat import *
+from services.models.listing import *
 from faker import Faker
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
@@ -60,13 +60,13 @@ def generate_user_profiles(count=10):
     except Exception as e:
         print(f'Error creating users: {e}')
 
-def generate_posts(count=10):
+def generate_listings(count=10):
     """
-    Generates and inserts *count* number of service posts into database.
+    Generates and inserts *count* number of service listings into database.
     Authors are picked at random from existing users.
     *NOTE: THERE MUST BE USERS AVAILABLE IN DB FOR THIS FUNCTION TO WORK*
     """
-    print('Generating Test Service Posts...')
+    print('Generating Test Service listings...')
 
     try:
         users = list(User.objects.all())
@@ -74,9 +74,9 @@ def generate_posts(count=10):
             print('No users found. Run generate_user_profiles first.')
             return
 
-        test_services = [Service(
+        test_services = [Listing(
             author = random.choice(users),
-            listing_type = random.choice(Service.ListingType.values),
+            service_type = random.choice(Listing.ServiceType.values),
             title = fake.sentence(nb_words=10),
             description = fake.paragraph(),
             category = random.choice(service_types)[0],
@@ -85,14 +85,14 @@ def generate_posts(count=10):
         for i in range(count)
         ]
 
-        Service.objects.bulk_create(test_services)
+        Listing.objects.bulk_create(test_services)
 
-        print(f'{count} sample posts created successfully!')
+        print(f'{count} sample listings created successfully!')
 
     except Exception as e:
-        print(f'Error creating services: {e}')
+        print(f'Error creating listings: {e}')
 
 if __name__ == '__main__':
     num_records = int(input('Enter number of entries to generate: '))
     generate_user_profiles(num_records)
-    generate_posts(num_records)
+    generate_listings(num_records)

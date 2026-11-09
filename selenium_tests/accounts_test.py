@@ -140,6 +140,9 @@ class TestCreateAccount:
         browser.find_element(By.NAME, 'password2').send_keys('Comhluadart3st1')
         browser.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
+        WebDriverWait(browser, 10).until(
+            EC.url_to_be(live_server.url + '/account_summary/')
+        )
         assert browser.current_url.endswith('/account_summary/')
         
 
