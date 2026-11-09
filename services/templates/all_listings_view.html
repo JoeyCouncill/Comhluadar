@@ -3,9 +3,26 @@
 {% block content %}
 <div class="container mt-4">
   <h1 class="mb-4 text-primary">View All listings</h1>
+  <!-- Search and submit button -->
+    <form method="GET" action="{% url 'all_listings_view' %}">
+
+        <input
+            type="text"
+            name="search"
+            style="width: 50%;"
+            placeholder="Search by listing type, title, description, category ..."
+            value="{{ query }}"
+        >
+
+        <button class="btn btn-primary" type="submit">Search</button>
+
+        <a href="{% url 'all_listings_view' %}" class="btn btn-primary">Clear Search</a>
+        
+    </form>
+    <br>
+    <br>
 
   <!-- FILTER/SORT WILL GO HERE LATER (TODO-37)-->
-
   {% if page_obj %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       {% for listing in page_obj %}
@@ -27,12 +44,17 @@
             </div>
           </div>
         </div>
+      {% empty %}
+    <p>No matching services found.</p>
       {% endfor %}
     </div>
     {% if page_obj.has_other_pages %}
       <nav aria-label="listing pages" class="mt-4">
         <ul class="pagination justify-content-center">
           {% if page_obj.has_previous %}
+              <a href="?search={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">
+                Previous
+              </a>
             <li class="page-item">
               <a class="page-link" href="{% querystring page=page_obj.previous_page_number %}">Previous</a>
             </li>
@@ -45,6 +67,9 @@
           </li>
 
           {% if page_obj.has_next %}
+            <a href="?search={{ query|urlencode }}&page={{ page_obj.next_page_number }}">
+              Next
+            </a> 
             <li class="page-item">
               <a class="page-link" href="{% querystring page=page_obj.next_page_number %}">Next</a>
             </li>

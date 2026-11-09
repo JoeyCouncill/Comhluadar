@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
@@ -8,10 +9,33 @@ from services.models import Listing
 from services.forms import CreateListingForm
 
 def all_listings_view(request):
-	listings = Listing.objects.all().select_related('author__profile').order_by('-created_at')
-	paginator = Paginator(listings, 12)
-	page_obj = paginator.get_page(request.GET.get('page'))
-	return render(request, 'all_listings_view.html', {'page_obj': page_obj})
+	
+    query = request.GET.get('search', '').strip()
+
+    # Get all posts by default
+    posts = Listing.objects.all().select_related(
+        'author__profile'
+    ).order_by('-created_at')
+
+    # Filter posts when search keyword is entered
+    if query:
+        posts = posts.filter(
+            Q(category__icontains=query) |
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(service_type__icontains=query)
+        )
+
+    # Apply pagination after filtering
+    paginator = Paginator(posts, 12)
+
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    return render(request, 'all_listings_view.html', {
+        'page_obj': page_obj,
+        'query': query
+    })
+
 def new_listing(request):
 	if request.method == 'POST':
 		form = CreateListingForm(request.POST)
