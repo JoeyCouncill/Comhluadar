@@ -4,12 +4,42 @@ from .forms import CreateServiceForm
 from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User 
+from django.db.models import Q
+
+#def all_posts_view(request):
+#	posts = Service.objects.all().select_related('author__profile').order_by('-created_at')
+#	paginator = Paginator(posts, 12)
+#	page_obj = paginator.get_page(request.GET.get('page'))
+#	return render(request, 'all_posts_view.html', {'page_obj': page_obj})
 
 def all_posts_view(request):
-	posts = Service.objects.all().select_related('author__profile').order_by('-created_at')
-	paginator = Paginator(posts, 12)
-	page_obj = paginator.get_page(request.GET.get('page'))
-	return render(request, 'all_posts_view.html', {'page_obj': page_obj})
+
+    query = request.GET.get('search', '').strip()
+
+    # Get all posts by default
+    posts = Service.objects.all().select_related(
+        'author__profile'
+    ).order_by('-created_at')
+
+    # Filter posts when search keyword is entered
+    if query:
+        posts = posts.filter(
+            Q(category__icontains=query) |
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(listing_type__icontains=query)
+        )
+
+    # Apply pagination after filtering
+    paginator = Paginator(posts, 12)
+
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    return render(request, 'all_posts_view.html', {
+        'page_obj': page_obj,
+        'query': query
+    })
 
 def new_post(request):
 	if request.method == 'POST':
@@ -35,3 +65,4 @@ def new_post(request):
 		'form': form,
 		'today': timezone.localdate().isoformat(),
 	})
+
