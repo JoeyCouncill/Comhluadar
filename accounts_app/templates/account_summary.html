@@ -3,6 +3,7 @@
 {% block title %}My Profile{% endblock %}
 
 {% block content %}
+
 <div class="container mt-4">
 
   <!-- Cover Photo -->
@@ -11,7 +12,17 @@
     class="border rounded bg-light d-flex align-items-center justify-content-center"
     style="height: 220px;"
   >
-    Cover Photo
+    {% if user.profile.cover_photo %}
+      <img
+        src="{{ user.profile.cover_photo.url }}"
+        alt="Your cover photo"
+        style="width: 100%; height: 100%; object-fit: cover;"
+       >
+    {% else %}
+      <div class="h-100 d-flex align-items-center justify-content-center">
+      Cover Photo
+    </div>
+  {% endif %}
   </div>
 
   <!-- Profile Header -->
@@ -30,7 +41,11 @@
           margin-left: 30px;
         "
       >
-        Profile Picture
+        <img
+          src="{{ user.profile.profile_picture_url }}"
+          class="rounded-circle"
+          style="width: 100%; height: 100%; object-fit: cover;"
+        >
       </div>
 
       <div class="ms-4 mb-2">
@@ -66,7 +81,7 @@
       <h4>About Me</h4>
 
       <p id="profile-bio" class="mb-0">
-        Student bio will appear here.
+        {{ user.profile.bio|default:"No bio added yet."|linebreaksbr }}
       </p>
     </div>
   </div>
@@ -77,8 +92,14 @@
       <h4>Skills</h4>
 
       <div id="profile-skills">
-        <span class="badge bg-secondary me-2">Example Skill</span>
-        <span class="badge bg-secondary me-2">Example Skill</span>
+        <span class="badge bg-secondary me-2">
+          {% if user.profile.skills == "Other" %}
+            {{ user.profile.other_skill }}
+          {% else %}
+            {{ user.profile.get_skills_display|default:"No skills added yet." }}
+          {% endif %}
+        </span>
+        
       </div>
     </div>
   </div>
@@ -90,11 +111,7 @@
 
       <div id="profile-interests">
         <span class="badge bg-light text-dark border me-2">
-          Example Interest
-        </span>
-
-        <span class="badge bg-light text-dark border me-2">
-          Example Interest
+          {{ user.profile.interests|default:"No interests added yet." }}
         </span>
       </div>
     </div>
