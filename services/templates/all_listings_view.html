@@ -1,10 +1,10 @@
-{% extends 'base_service.html' %}
+{% extends 'base.html' %}
 {% block title %}View All Posts{% endblock %}
 {% block content %}
 <div class="container mt-4">
   <h1 class="mb-4 text-primary">View All Posts</h1>
   <!-- Search and submit button -->
-    <form method="GET" action="{% url 'all_posts_view' %}">
+    <form method="GET" action="{% url 'all_listings_view' %}">
 
         <input
             type="text"
@@ -16,7 +16,7 @@
 
         <button class="btn btn-primary" type="submit">Search</button>
 
-        <a href="{% url 'all_posts_view' %}" class="btn btn-primary">Clear Search</a>
+        <a href="{% url 'all_listings_view' %}" class="btn btn-primary">Clear Search</a>
         
 
     </form>
