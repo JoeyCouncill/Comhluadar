@@ -15,6 +15,7 @@ from services.models.listing import *
 from faker import Faker
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from accounts.models.review import UserReview
 
 fake = Faker()
 User = get_user_model()
@@ -92,7 +93,60 @@ def generate_listings(count=10):
     except Exception as e:
         print(f'Error creating listings: {e}')
 
+def generate_user_reviews(count=10):
+    """
+    Generates sample user reviews between existing users.
+    A user cannot review themselves, and each reviewer/reviewed-user
+    pair can only exist once.
+    """
+    print('Generating Test User Reviews...')
+
+    try:
+        users = list(User.objects.all())
+
+        if len(users) < 2:
+            print('Not enough users found. At least 2 users are required.')
+            return
+
+        reviews_created = 0
+        attempts = 0
+        max_attempts = count * 20
+
+        while reviews_created < count and attempts < max_attempts:
+            attempts += 1
+
+            reviewer, reviewed_user = random.sample(users, 2)
+
+            if UserReview.objects.filter(
+                reviewer=reviewer,
+                reviewed_user=reviewed_user
+            ).exists():
+                continue
+
+            UserReview.objects.create(
+                reviewer=reviewer,
+                reviewed_user=reviewed_user,
+                rating=random.randint(4, 5),
+                comment=random.choice([
+                    "Really helpful and easy to work with.",
+                    "Great communication and very reliable.",
+                    "Had a great experience working with them.",
+                    "Very friendly and knowledgeable.",
+                    "Would definitely work with them again.",
+                    "Super helpful and responded quickly.",
+                    "Made the whole process really easy.",
+                ])
+            )
+
+            reviews_created += 1
+
+        print(f'{reviews_created} sample user reviews created successfully!')
+
+    except Exception as e:
+        print(f'Error creating user reviews: {e}')
+
 if __name__ == '__main__':
     num_records = int(input('Enter number of entries to generate: '))
     generate_user_profiles(num_records)
     generate_listings(num_records)
+    generate_user_reviews(num_records)
