@@ -1,7 +1,7 @@
 import pytest
 from datetime import date
-from service_app.models import Service
-from accounts_app.models import Profile
+from services.models import Listing
+from accounts.models import Profile
 
 @pytest.fixture
 def test_user(db, django_user_model, client):
@@ -40,10 +40,10 @@ def temporary_media(settings, tmp_path):
     settings.MEDIA_ROOT = tmp_path / "media"
 
 @pytest.fixture
-def service(test_user):
-    return Service.objects.create(
+def listing(test_user):
+    return Listing.objects.create(
         author=test_user,
-        listing_type="offer",
+        service_type="offer",
         title="Tutoring",
         date=date(2026, 11, 1),
     )

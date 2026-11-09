@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Service
-from .forms import CreateServiceForm
 from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
+from services.forms import CreateListingForm
+from services.models import Listing
+from django.db.models import Q
 
 SORT_OPTIONS = {
 	'posted_new': '-created_at',
@@ -60,4 +61,4 @@ def new_post(request):
 
 def post_detail(request, post_id):
 	post = get_object_or_404(Service.objects.select_related('author__profile'), pk=post_id)
-	return render(request, 'post_detail.html', {'post': post})
+	return render(request, 'listing_detail.html', {'post': post})

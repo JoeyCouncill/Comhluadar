@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}View All Listings{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4 text-primary">View All Listings</h1>
+
+  <form method="get" action="{% url 'all_listings_view' %}" class="row g-2 mb-4 align-items-end">
+    <div class="col-12">
+      <input type="text" name="search" class="form-control"
+             placeholder="Search by title, description, category..."
+             value="{{ query }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-1">Listing Type</label>
+      <select name="type" class="form-select">
+        <option value="">All Listing Types</option>
+        <option value="offer" {% if request.GET.type == 'offer' %}selected{% endif %}>Offers</option>
+        <option value="request" {% if request.GET.type == 'request' %}selected{% endif %}>Requests</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-1">Category</label>
+      <select name="category" class="form-select">
+        <option value="">All Categories</option>
+        {% for value, label in categories %}
+          <option value="{{ value }}" {% if request.GET.category == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-1">Sort by</label>
+      <select name="sort" class="form-select">
+        <option value="posted_new" {% if request.GET.sort == 'posted_new' or not request.GET.sort %}selected{% endif %}>Post date (newest to oldest)</option>
+        <option value="posted_old" {% if request.GET.sort == 'posted_old' %}selected{% endif %}>Post date (oldest to newest)</option>
+        <option value="service_soon" {% if request.GET.sort == 'service_soon' %}selected{% endif %}>Service date (soonest first)</option>
+        <option value="service_late" {% if request.GET.sort == 'service_late' %}selected{% endif %}>Service date (furthest out first)</option>
+      </select>
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button type="submit" class="btn btn-primary flex-fill">Apply</button>
+      <a href="{% url 'all_listings_view' %}" class="btn btn-outline-secondary">Reset</a>
+    </div>
+  </form>
+
+  {% if page_obj.object_list %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for post in page_obj %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <span class="badge {% if post.service_type == 'offer' %}bg-success{% else %}bg-warning text-dark{% endif %} mb-2">
+                {{ post.get_service_type_display }}
+              </span>
+              <h5 class="card-title">{{ post.title }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ post.get_category_display }}</h6>
+              <p class="card-text">{{ post.description|truncatewords:25 }}</p>
+              <p class="card-text mb-0"><small class="text-muted">Service date: {{ post.date|date:"M j, Y" }}</small></p>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+              <small class="text-muted">
+                {{ post.author.profile.display_name }} &middot; {{ post.created_at|date:"M j, Y" }}
+              </small>
+              <a href="{% url 'listing_detail' post.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+      <nav aria-label="Listing pages" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="{% querystring page=page_obj.previous_page_number %}">Previous</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          {% endif %}
+
+          <li class="page-item disabled">
+            <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+          </li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="{% querystring page=page_obj.next_page_number %}">Next</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  {% else %}
+    <p class="text-muted">No matching listings found.</p>
+  {% endif %}
+</div>
+{% endblock %}
