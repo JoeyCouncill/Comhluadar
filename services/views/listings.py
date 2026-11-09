@@ -9,8 +9,8 @@ from django.db.models import Q
 SORT_OPTIONS = {
 	'posted_new': '-created_at',
 	'posted_old': 'created_at',
-	'service_soon': 'date',
-	'service_late': '-date',
+	'listing_soon': 'date',
+	'listing_late': '-date',
 }
 
 def all_listings_view(request):
