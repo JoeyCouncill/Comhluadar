@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_not_required
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Avg
-
 from accounts.forms import EditProfileForm
 from accounts.models import UserReview
-
+from services.models import *
 
 @login_not_required
 def front_page(request):
@@ -60,3 +60,11 @@ def edit_profile(request):
         return redirect("account_summary")
 
     return render(request, "edit_profile.html", {"form": form})
+
+def user_profile(request, user_id):
+    profile_user = get_object_or_404(get_user_model().objects.select_related('profile'), pk=user_id)
+    listings = Listing.objects.filter(author=profile_user).order_by('-created_at')
+    return render(request, 'user_profile.html', {
+        'profile_user': profile_user,
+        'listings': listings,
+    })

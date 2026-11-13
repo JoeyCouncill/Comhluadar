@@ -61,7 +61,7 @@
             </div>
             <div class="card-footer d-flex justify-content-between align-items-center">
               <small class="text-muted">
-                {{ listing.author.profile.display_name }} &middot; {{ listing.created_at|date:"M j, Y" }}
+                <a href="{% url 'user_profile' listing.author.pk %}" class="text-decoration-none">{{ listing.author.profile.display_name }}</a> &middot; {{ listing.created_at|date:"M j, Y" }}
               </small>
               <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-sm btn-outline-primary">View</a>
             </div>

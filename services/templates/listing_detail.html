@@ -14,7 +14,7 @@
 
             <hr>
             <p class="mb-1"><strong>Service date:</strong> {{ listing.date|date:"F j, Y" }}</p>
-            <p class="mb-1"><strong>Posted by:</strong> {{ listing.author.profile.display_name }}</p>
+            <a href="{% url 'user_profile' listing.author.pk %}" class="text-decoration-none">{{ listing.author.profile.display_name }}</a>
             <p class="mb-0"><strong>Posted on:</strong> {{ listing.created_at|date:"M j, Y" }}</p>
         </div>
 
