@@ -181,6 +181,9 @@ class TestNewlisting:
         logged_in_browser.find_element(By.ID, "date").send_keys(service_date.strftime("%m%d%Y"))
         logged_in_browser.find_element(By.CSS_SELECTOR, 'form button.btn-success').click()
 
+        alert = WebDriverWait(logged_in_browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "alert")))
+
+        assert 'Your listing has been saved!' in alert.text
         assert 'Your listing has been saved!' in logged_in_browser.find_element(By.CLASS_NAME, 'alert').text
 
         listing = Listing.objects.get(title='Selenium Created Listing')
@@ -200,6 +203,9 @@ class TestNewlisting:
         Select(logged_in_browser.find_element(By.ID, 'category')).select_by_value('Tutoring')
         logged_in_browser.find_element(By.ID, 'date').send_keys((timezone.localdate() + timedelta(days=5)).strftime("%m%d%Y"))
         logged_in_browser.find_element(By.CSS_SELECTOR, 'form button.btn-success').click()
+
+        alert = WebDriverWait(logged_in_browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "alert")))
+
         assert "Your listing has been saved!" in logged_in_browser.find_element(By.CLASS_NAME, "alert").text
 
         logged_in_browser.get(live_server.url + '/all_listings_view/')
