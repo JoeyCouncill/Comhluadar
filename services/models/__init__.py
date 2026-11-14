@@ -1,2 +1,2 @@
 from .listing import Listing
-from .review import ServiceReview
+from .review import Review

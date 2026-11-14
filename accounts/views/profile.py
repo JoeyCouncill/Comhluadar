@@ -5,7 +5,7 @@ from django.db import transaction
 from django.db.models import Avg
 
 from accounts.forms import EditProfileForm
-from accounts.models import UserReview
+from services.models import Review
 
 
 @login_not_required
@@ -15,7 +15,7 @@ def front_page(request):
 
 def account_summary(request):
     reviews = (
-        UserReview.objects
+        Review.objects
         .filter(reviewed_user=request.user)
         .select_related("reviewer")
         .order_by("-created_at")

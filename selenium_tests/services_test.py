@@ -156,7 +156,6 @@ class TestNewlisting:
     """
     Tests for New listing page
     """
-
     def test_new_listing_access_attempt_not_logged_in(self, browser, live_server) -> None:
         """
         Attempting to access the 'new listing' page directly while not logged in redirects to log in page.
