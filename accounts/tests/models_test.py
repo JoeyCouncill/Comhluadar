@@ -6,15 +6,18 @@ from accounts.models import Profile, UserBlock
 def test_profile_model_links_to_user(test_user):
     assert test_user.profile.display_name == "deepa"
 
+
 def test_user_cannot_have_two_profiles(test_user):
     with pytest.raises(IntegrityError):
         with transaction.atomic():
             Profile.objects.create(user=test_user)
 
+
 def test_user_cannot_block_self(test_user):
     with pytest.raises(IntegrityError):
         with transaction.atomic():
             UserBlock.objects.create(blocker=test_user, blocked=test_user)
+
 
 def test_duplicate_block_rejected(test_user, other_test_user):
     UserBlock.objects.create(blocker=test_user, blocked=other_test_user)
@@ -23,8 +26,8 @@ def test_duplicate_block_rejected(test_user, other_test_user):
         with transaction.atomic():
             UserBlock.objects.create(blocker=test_user, blocked=other_test_user)
 
+
 def test_block_is_directional(test_user, other_test_user):
     UserBlock.objects.create(blocker=test_user, blocked=other_test_user)
-
     assert test_user.blocks_created.filter(blocked=other_test_user).exists()
     assert not other_test_user.blocks_created.filter(blocked=test_user).exists()

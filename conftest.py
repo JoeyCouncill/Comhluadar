@@ -3,6 +3,7 @@ from datetime import date
 from services.models import Listing
 from accounts.models import Profile
 
+
 @pytest.fixture
 def test_user(db, django_user_model, client):
     user = django_user_model.objects.create_user(

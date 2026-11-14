@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from services.models import Listing, Review
 
 
-pytestmark = pytest.mark.django_db
+params = pytest.mark.parametrize
 
 @pytest.fixture
 def review_data(listing, other_test_user):
@@ -18,7 +18,7 @@ def review_data(listing, other_test_user):
     }
 
 
-@pytest.mark.parametrize(
+@params(
     ("service_type", "reviewing_author", "expected_role"),
     [
         ("offer", True, "provider"),
@@ -52,7 +52,7 @@ def test_role_mapping_and_valid_review(listing, other_test_user, service_type, r
     assert review.reviewed_role == expected_role
 
 
-@pytest.mark.parametrize(
+@params(
     ("service_type", "reviewing_author", "wrong_role"),
     [
         ("offer", True, "recipient"),
@@ -76,6 +76,7 @@ def test_wrong_role_rejected(listing, other_test_user, service_type, reviewing_a
 
     assert "reviewed_role" in error.value.message_dict
 
+
 def test_review_requires_listing_author(review_data, django_user_model):
     third_user = django_user_model.objects.create_user(
         username="third@example.com",
@@ -90,7 +91,7 @@ def test_review_requires_listing_author(review_data, django_user_model):
         Review(**review_data).full_clean()
 
 
-@pytest.mark.parametrize(
+@params(
     ("changes", "expected_message"),
     [
         ({"rating": 0}, "rating"),
@@ -129,7 +130,7 @@ def test_duplicate_review_is_rejected(review_data):
         Review(**review_data).full_clean()
 
 
-@pytest.mark.parametrize("rating", [1, 5])
+@params("rating", [1, 5])
 def test_ratings_1_through_5_allowed(review_data, rating):
     review_data["rating"] = rating
     review = Review(**review_data)
