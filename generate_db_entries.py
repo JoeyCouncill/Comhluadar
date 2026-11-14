@@ -15,7 +15,7 @@ from services.models.listing import *
 from faker import Faker
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from accounts.models.review import UserReview
+from services.models import Review
 
 fake = Faker()
 User = get_user_model()
@@ -117,13 +117,13 @@ def generate_user_reviews(count=10):
 
             reviewer, reviewed_user = random.sample(users, 2)
 
-            if UserReview.objects.filter(
+            if Review.objects.filter(
                 reviewer=reviewer,
                 reviewed_user=reviewed_user
             ).exists():
                 continue
 
-            UserReview.objects.create(
+            Review.objects.create(
                 reviewer=reviewer,
                 reviewed_user=reviewed_user,
                 rating=random.randint(4, 5),
