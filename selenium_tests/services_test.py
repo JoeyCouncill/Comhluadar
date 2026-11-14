@@ -5,10 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import date, timedelta
 from selenium.webdriver.common.action_chains import ActionChains
-
 from urllib.parse import quote
-
-from conftest import listing
 from services.models import *
 import pytest
 
