@@ -6,6 +6,7 @@ from services.forms import CreateListingForm
 from services.models import Listing
 from django.db.models import Q
 from services.forms import CreateListingForm
+from django.db.models import Avg
 
 SORT_OPTIONS = {
     'posted_new': '-created_at',
@@ -82,5 +83,27 @@ def new_listing(request):
     })
 
 def listing_detail(request, listing_id):
-    listing = get_object_or_404(Listing.objects.select_related('author__profile'), pk=listing_id)
-    return render(request, 'listing_detail.html', {"listing": listing})
+    listing = get_object_or_404(
+        Listing.objects.select_related('author__profile'),
+        pk=listing_id
+    )
+
+    # Retrieve reviews associated with this listing.
+    reviews = (
+        listing.reviews
+        .select_related('reviewer', 'reviewed_user')
+        .order_by('-created_at')
+    )
+
+    average_rating = reviews.aggregate(
+        average=Avg('rating')
+    )['average']
+
+    context = {
+        'listing': listing,
+        'reviews': reviews,
+        'review_count': reviews.count(),
+        'average_rating': average_rating,
+    }
+
+    return render(request, 'listing_detail.html', context)
