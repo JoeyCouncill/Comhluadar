@@ -93,12 +93,16 @@ def generate_listings(count=10):
     except Exception as e:
         print(f'Error creating listings: {e}')
 
+"""
+generate_user_reviews is commented out right now because it currently will not work without engagements being implemented
 def generate_user_reviews(count=10):
     """
+"""
     Generates sample user reviews between existing users.
     A user cannot review themselves, and each reviewer/reviewed-user
     pair can only exist once.
     """
+"""
     print('Generating Test User Reviews...')
 
     try:
@@ -144,6 +148,7 @@ def generate_user_reviews(count=10):
 
     except Exception as e:
         print(f'Error creating user reviews: {e}')
+"""        
 
 if __name__ == '__main__':
     num_records = int(input('Enter number of entries to generate: '))

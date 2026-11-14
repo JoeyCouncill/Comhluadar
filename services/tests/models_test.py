@@ -135,8 +135,8 @@ def test_ratings_1_through_5_allowed(review_data, rating):
     review_data["rating"] = rating
     review = Review(**review_data)
     review.full_clean()
-    ##review.save()
-    ##review.refresh_from_db()
+    review.save()
+    review.refresh_from_db()
     assert review.rating == rating
 
 
