@@ -8,6 +8,7 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('', include('messaging.urls')),
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(

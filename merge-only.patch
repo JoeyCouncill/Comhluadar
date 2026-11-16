@@ -1,0 +1,269 @@
+diff --git a/service_app/templates/all_posts_view.html b/service_app/templates/all_posts_view.html
+remerge CONFLICT (content): Merge conflict in service_app/templates/all_posts_view.html
+index 09fbbbf..a0dd258 100644
+--- a/service_app/templates/all_posts_view.html
++++ b/service_app/templates/all_posts_view.html
+@@ -3,129 +3,27 @@
+ {% block content %}
+ <div class="container mt-4">
+   <h1 class="mb-4 text-primary">View All Posts</h1>
+-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
++  <!-- Search and submit button -->
++    <form method="GET" action="{% url 'all_posts_view' %}">
+ 
+-<<<<<<< 35b62ca (view posts is implemented with search functionality for the post listing. It will currently search the service_app_services table. Testing will be done after new post has been completed. Modified all_posts_view.html to include search and listing and views.py for the search query. For service app migrations under 0001_initial.py added max length = 100 for listing type.)
+-  <!-- Post View Form -->
+-    <form method="POST" class="border p-4 rounded bg-light shadow-sm">
+-    {% csrf_token %}
+-    <div class="mb-3">
+-      <!--New ad begin--->
+-   <!--<h4 font="bold" color="blue">Signed in as {{ user.username }}!</h4>
+-{% if user.is_authenticated %}
+-    
+-       - <form method="post" action="% url 'account_logout' %>
+-        {% csrf_token %}
+-        <a href="% url 'application_create' %" class="btn btn-primary me-2">New Application</a>
+-      <button type="submit" class="btn btn-outline-danger">Log out</button>
+-    </form>
+-{% else %}
+-    <p>Track your college applications in one place. </p>
+-    <a href="% url 'account_login' %">Log in</a>
+-    |
+-    <a href="{% url 'account_signup' %}">Sign up</a>
+-{% endif %}
+-
+-    <div class="container mt-5">
+-        <h1 >Application Search</h1>
+-        {% if messages %}
+-    {% for message in messages %}
+-        {% if message.tags == "error" %}
+-            <div class="alert alert-danger" role="alert">
+-                {{ message }}
+-            </div>
+-        {% endif %}
+-    {% endfor %}
+-{% endif %}-->
+-        <form method="GET" action="{% url 'all_posts_view' %}" class="mb-4">
+-      
+-    <div class="input-group">
+         <input
+-            type="search"
+-            name="q"
+-            class="form-control"
+-            placeholder="Search posts by category, description or user..."
++            type="text"
++            name="search"
++            style="width: 50%;"
++            placeholder="Search by listing type, title, description, category ..."
+             value="{{ query }}"
+         >
+ 
+-        <button type="submit" class="btn btn-primary">
+-            Search
+-        </button>
+-
+-        {% if query %}
+-            <a href="{% url 'all_posts_view' %}"
+-               class="btn btn-outline-secondary">
+-                Clear
+-            </a>
+-        {% endif %}
+-        </div>
+-        </form>
+-    <table  class="table table-striped">
+-        <thead>
+-            <tr>
+-                <th>Created Date</th>
+-                <th>Listing Type</th>
+-                <th>Category</th>
+-                <th>Title</th>
+-                <th>Requestor</th>
+-            </tr>
+-        </thead>
+-<tbody>
+-    {% for Service in posts %}
+-        <tr>
+-            <td>{{ Service.created_date }}</td>
+-            <td>{{ Service.listing_type }}</td>
+-            <td>{{ Service.category }}</td>
+-            <td>{{ Service.title }}</td>
+-            <td>{{ Service.requestor }}</td>
+-        </tr>
+-
+-
+-            
+-           <!--<td>
+-               <a href="{% url 'application_update'  apptracker_tracker.pk  %}"
+-                   class="btn btn-sm btn-primary">Edit</a>
+-                           <a href="{% url 'application_view'  apptracker_tracker.pk  %}"
+-                   class="btn btn-sm btn-primary">View Details</a>
+-
+-                   <form method="POST"
+-      action="{% url 'application_delete' apptracker_tracker.pk %}"
+-      style="display: inline;">
+-    {% csrf_token %}
+-    <button type="submit"
+-            class="btn btn-sm btn-danger"
+-            onclick="return confirm('Are you sure you want to delete this record?');">
+-        Delete
+-    </button>-->
+-</form>
+-
++        <button class="btn btn-primary" type="submit">Search</button>
+ 
+-            </td>
+-        </tr>
+-    {% empty %}
+-        <tr>
+-            <td colspan="5">
+-                {% if query %}
+-                    No posts match "{{ query }}".
+-                {% else %}
+-                    No posts have been added yet.
+-                {% endif %}
+-            </td>
+-        </tr>
+-    {% endfor %}
+-</tbody>
+-
+-    </table>
+-    </div>
+-
+-      <!--New ad end--->
+-    </div>
+-  </form> 
++        <a href="{% url 'all_posts_view' %}" class="btn btn-primary">Clear Search</a>
++        
+ 
++    </form>
++    <br>
++    <br>
+ 
+-=======
+   <!-- FILTER/SORT WILL GO HERE LATER (TODO-37)-->
+-
+   {% if page_obj %}
+     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+       {% for post in page_obj %}
+@@ -147,12 +45,17 @@
+             </div>
+           </div>
+         </div>
++      {% empty %}
++    <p>No matching services found.</p>
+       {% endfor %}
+     </div>
+     {% if page_obj.has_other_pages %}
+       <nav aria-label="Post pages" class="mt-4">
+         <ul class="pagination justify-content-center">
+           {% if page_obj.has_previous %}
++              <a href="?search={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">
++                   Previous
++              </a>
+             <li class="page-item">
+               <a class="page-link" href="{% querystring page=page_obj.previous_page_number %}">Previous</a>
+             </li>
+@@ -165,6 +68,9 @@
+           </li>
+ 
+           {% if page_obj.has_next %}
++              <a href="?search={{ query|urlencode }}&page={{ page_obj.next_page_number }}">
++               Next
++             </a> 
+             <li class="page-item">
+               <a class="page-link" href="{% querystring page=page_obj.next_page_number %}">Next</a>
+             </li>
+@@ -177,6 +83,8 @@
+   {% else %}
+     <p class="text-muted">No posts yet.</p>
+   {% endif %}
+->>>>>>> 9d681dc (Merge branch 'main' of https://github.com/JoeyCouncill/Comhluadar)
+ </div>
+-{% endblock %}
+\ No newline at end of file
++
++
++{% endblock %}
++
+diff --git a/service_app/views.py b/service_app/views.py
+remerge CONFLICT (content): Merge conflict in service_app/views.py
+index c73ea85..700603a 100644
+--- a/service_app/views.py
++++ b/service_app/views.py
+@@ -1,35 +1,45 @@
+-from django.db.models import query
+ from django.shortcuts import render, redirect, get_object_or_404
+ from .models import Service
+ from .forms import CreateServiceForm
+ from django.contrib import messages
+ from django.utils import timezone
+-<<<<<<< 35b62ca (view posts is implemented with search functionality for the post listing. It will currently search the service_app_services table. Testing will be done after new post has been completed. Modified all_posts_view.html to include search and listing and views.py for the search query. For service app migrations under 0001_initial.py added max length = 100 for listing type.)
++from django.core.paginator import Paginator
++from django.contrib.auth.models import User 
+ from django.db.models import Q
+ 
+-def all_posts_view(request):
+-	query = request.GET.get('q', '').strip()
+-	posts = Service.objects.all()
+-
+-	if query:
+-		posts = posts.filter(
+-			Q(listing_type__icontains=query) |
+-			Q(title__icontains=query) |
+-			Q(category__icontains=query) |
+-			Q(description__icontains=query) |
+-			Q(requestor__username__icontains=query)
+-		)
+-
+-	return render(request, 'all_posts_view.html', {'posts': posts, 'query': query})
+-=======
+-from django.core.paginator import Paginator
++#def all_posts_view(request):
++#	posts = Service.objects.all().select_related('author__profile').order_by('-created_at')
++#	paginator = Paginator(posts, 12)
++#	page_obj = paginator.get_page(request.GET.get('page'))
++#	return render(request, 'all_posts_view.html', {'page_obj': page_obj})
+ 
+ def all_posts_view(request):
+-	posts = Service.objects.all().select_related('author__profile').order_by('-created_at')
+-	paginator = Paginator(posts, 12)
+-	page_obj = paginator.get_page(request.GET.get('page'))
+-	return render(request, 'all_posts_view.html', {'page_obj': page_obj})
+->>>>>>> 9d681dc (Merge branch 'main' of https://github.com/JoeyCouncill/Comhluadar)
++
++    query = request.GET.get('search', '').strip()
++
++    # Get all posts by default
++    posts = Service.objects.all().select_related(
++        'author__profile'
++    ).order_by('-created_at')
++
++    # Filter posts when search keyword is entered
++    if query:
++        posts = posts.filter(
++            Q(category__icontains=query) |
++            Q(title__icontains=query) |
++            Q(description__icontains=query) |
++            Q(listing_type__icontains=query)
++        )
++
++    # Apply pagination after filtering
++    paginator = Paginator(posts, 12)
++
++    page_obj = paginator.get_page(request.GET.get('page'))
++
++    return render(request, 'all_posts_view.html', {
++        'page_obj': page_obj,
++        'query': query
++    })
+ 
+ def new_post(request):
+ 	if request.method == 'POST':
+@@ -54,4 +64,5 @@ def new_post(request):
+ 	return render(request, 'new_post.html', {
+ 		'form': form,
+ 		'today': timezone.localdate().isoformat(),
+-	})
+\ No newline at end of file
++	})
++
