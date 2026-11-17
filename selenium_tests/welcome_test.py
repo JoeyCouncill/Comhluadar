@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class TestWelcome:
     """
@@ -22,7 +23,9 @@ class TestWelcome:
         """
         browser.get(live_server.url)
         browser.find_element(By.LINK_TEXT, 'Log in').click()
-        assert browser.current_url.endswith('/user_login/')
+
+        wait = WebDriverWait(browser, 10)
+        wait.until(EC.url_contains('/user_login/'))
         assert 'Comhluadar | Log In' in browser.title
 
 
@@ -32,5 +35,7 @@ class TestWelcome:
         """
         browser.get(live_server.url)
         browser.find_element(By.LINK_TEXT, 'Create Account').click()
-        assert browser.current_url.endswith('/create_account/')
+
+        wait = WebDriverWait(browser, 10)
+        wait.until(EC.url_contains('/create_account/'))
         assert 'Comhluadar | Create Account' in browser.title

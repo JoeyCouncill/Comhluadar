@@ -75,9 +75,6 @@
       <nav aria-label="Listing pages" class="mt-4">
         <ul class="pagination justify-content-center">
           {% if page_obj.has_previous %}
-              <a href="?search={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">
-                Previous
-              </a>
             <li class="page-item">
               <a class="page-link" href="{% querystring page=page_obj.previous_page_number %}">Previous</a>
             </li>
@@ -90,9 +87,6 @@
           </li>
 
           {% if page_obj.has_next %}
-            <a href="?search={{ query|urlencode }}&page={{ page_obj.next_page_number }}">
-              Next
-            </a> 
             <li class="page-item">
               <a class="page-link" href="{% querystring page=page_obj.next_page_number %}">Next</a>
             </li>

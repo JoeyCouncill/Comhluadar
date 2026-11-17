@@ -36,7 +36,7 @@ def all_listings_view(request):
             Q(service_type__icontains=query)
         )
 
-	# Dropdown Filters
+    # Dropdown Filters
     if service_type in ('offer', 'request'):
         posts = posts.filter(service_type = service_type)
 		
@@ -46,7 +46,7 @@ def all_listings_view(request):
     # Sorting    
     posts = posts.order_by(SORT_OPTIONS.get(sort, '-created_at'))
 
-	# Apply pagination after filtering
+    # Apply pagination after filtering
     paginator = Paginator(posts, 12)
 
     page_obj = paginator.get_page(request.GET.get('page'))
