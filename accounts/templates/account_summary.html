@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}My Profile{% endblock %}
+{% block title %}{% if is_own_profile %}My Profile{% else %}{{ profile_user.get_full_name|default:profile_user.username }}{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -12,10 +12,10 @@
     class="border rounded bg-light d-flex align-items-center justify-content-center"
     style="height: 220px; overflow: hidden;"
   >
-    {% if user.profile.cover_photo %}
+    {% if profile_user.profile.cover_photo %}
       <img
-        src="{{ user.profile.cover_photo.url }}"
-        alt="Your cover photo"
+        src="{{ profile_user.profile.cover_photo.url }}"
+        alt="Cover photo"
         style="width: 100%; height: 100%; object-fit: cover;"
       >
     {% else %}
@@ -43,7 +43,7 @@
         "
       >
         <img
-          src="{{ user.profile.profile_picture_url }}"
+          src="{{ profile_user.profile.profile_picture_url }}"
           alt="Profile picture"
           class="rounded-circle"
           style="width: 100%; height: 100%; object-fit: cover;"
@@ -53,7 +53,7 @@
       <div class="ms-4 mb-2">
 
         <h2 id="profile-full-name" class="mb-1">
-          {{ user.get_full_name|default:"Student Name" }}
+          {{ profile_user.get_full_name|default:"Student Name" }}
         </h2>
 
         <!-- User Rating -->
@@ -77,13 +77,16 @@
           University of Nebraska Omaha
         </p>
 
+        {% if is_own_profile %}
         <p id="profile-email" class="mb-0">
-          {{ user.email }}
+          {{ profile_user.email }}
         </p>
+        {% endif %}
 
       </div>
     </div>
 
+    {% if is_own_profile %}
     <a
       href="{% url 'edit_profile' %}"
       class="btn btn-primary"
@@ -91,6 +94,7 @@
     >
       Edit Profile
     </a>
+    {% endif %}
 
   </div>
 
@@ -141,6 +145,24 @@
       </button>
     </li>
 
+    <!--My Listings Tabs-->
+  {% if is_own_profile %}
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="listings-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#listings-pane"
+        type="button"
+        role="tab"
+      >
+        My Listings
+        {% if listings %}
+          <span class="badge bg-secondary ms-1">{{ listings|length }}</span>
+        {% endif %}
+      </button>
+    </li>
+  {% endif %}
   </ul>
 
 
@@ -159,7 +181,7 @@
           <h4>About Me</h4>
 
           <p id="profile-bio" class="mb-0">
-            {{ user.profile.bio|default:"No bio added yet."|linebreaksbr }}
+            {{ profile_user.profile.bio|default:"No bio added yet."|linebreaksbr }}
           </p>
 
         </div>
@@ -184,10 +206,10 @@
           <div id="profile-skills">
             <span class="badge bg-secondary me-2">
 
-              {% if user.profile.skills == "Other" %}
-                {{ user.profile.other_skill }}
+              {% if profile_user.profile.skills == "Other" %}
+                {{ profile_user.profile.other_skill }}
               {% else %}
-                {{ user.profile.get_skills_display|default:"No skills added yet." }}
+                {{ profile_user.profile.get_skills_display|default:"No skills added yet." }}
               {% endif %}
 
             </span>
@@ -205,7 +227,7 @@
 
           <div id="profile-interests">
             <span class="badge bg-light text-dark border me-2">
-              {{ user.profile.interests|default:"No interests added yet." }}
+              {{ profile_user.profile.interests|default:"No interests added yet." }}
             </span>
           </div>
 
@@ -315,6 +337,67 @@
 
     </div>
 
+    <!-- MY LISTINGS TAB -->
+  {% if is_own_profile %}
+    <div class="tab-pane fade" id="listings-pane" role="tabpanel">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+          <h4 class="mb-3">My listings</h4>
+
+          {% if listings %}
+            {% for listing in listings %}
+              <div class="border rounded p-3 mb-3" id="listing-{{ listing.id }}">
+                <div class="d-flex justify-content-between align-items-start">
+
+                  <div>
+                    <a href="{% url 'listing_detail' listing.id %}" class="fw-bold text-decoration-none">
+                      {{ listing.title }}
+                    </a>
+                    <span class="badge {% if listing.service_type == 'offer' %}bg-success{% else %}bg-info text-dark{% endif %} ms-2">
+                      {{ listing.get_service_type_display }}
+                    </span>
+                    {% if listing.category %}
+                      <span class="badge bg-light text-dark border ms-1">{{ listing.category }}</span>
+                    {% endif %}
+
+                    <div class="text-muted small">
+                      For {{ listing.date|date:"M j, Y" }} · posted {{ listing.created_at|date:"M j, Y" }}
+                    </div>
+                    {% if listing.description %}
+                      <p class="mt-2 mb-0">{{ listing.description|truncatechars:120 }}</p>
+                    {% endif %}
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <a href="{% url 'edit_listing' listing.id %}"
+                       class="btn btn-sm btn-outline-primary"
+                       id="edit-listing-{{ listing.id }}">Edit</a>
+
+                    <form method="post"
+                          action="{% url 'delete_listing' listing.id %}"
+                          onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="btn btn-sm btn-outline-danger"
+                              id="delete-listing-{{ listing.id }}">Delete</button>
+                    </form>
+                  </div>
+
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div id="no-listings-message" class="text-center text-muted py-4">
+              <h5>No active listings</h5>
+              <p class="mb-0">Listings you create will appear here.</p>
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  {% endif %}
   </div>
 
 </div>
