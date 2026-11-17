@@ -21,7 +21,7 @@
         <div class="card-footer d-flex justify-content-between">
             <a href="javascript:history.back()" class="btn btn-outline-secondary">Back</a>
             <button type="button" class="btn btn-primary">
-                {% if listing.listing_type == 'offer' %}Accept this offer{% else %}Accept this request{% endif %}
+                {% if listing.service_type == 'offer' %}Accept this offer{% else %}Accept this request{% endif %}
             </button>
         </div>
     </div>
