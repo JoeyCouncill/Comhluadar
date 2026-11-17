@@ -13,24 +13,37 @@ def front_page(request):
     return render(request, "index.html")
 
 
+
 def account_summary(request):
     reviews = (
         Review.objects
         .filter(reviewed_user=request.user)
-        .select_related("reviewer")
+        .select_related("reviewer", "listing")
         .order_by("-created_at")
     )
 
+    # Separate reviews by the role of the person being reviewed.
+    provider_reviews = reviews.filter(
+        reviewed_role=Review.Role.PROVIDER
+    )
+
+    recipient_reviews = reviews.filter(
+        reviewed_role=Review.Role.RECIPIENT
+    )
+
+    # Overall rating includes both reviews.
     average_rating = reviews.aggregate(
         average=Avg("rating")
     )["average"]
 
-    review_count = reviews.count()
-
     context = {
         "reviews": reviews,
+        "provider_reviews": provider_reviews,
+        "recipient_reviews": recipient_reviews,
         "average_rating": average_rating,
-        "review_count": review_count,
+        "review_count": reviews.count(),
+        "provider_review_count": provider_reviews.count(),
+        "recipient_review_count": recipient_reviews.count(),
     }
 
     return render(
