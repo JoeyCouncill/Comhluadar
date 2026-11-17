@@ -380,11 +380,17 @@
                   class="text-center text-muted py-4"
                 >
                   <h5>No provider reviews yet</h5>
-
+                  {% if is_own_profile %}
                   <p class="mb-0">
                     Reviews from students you've provided services to
                     will appear here.
                   </p>
+                  {% else %}
+                  <p class="mb-0">
+                    Reviews from students this user has provided services to
+                    will appear here.
+                  </p>
+                  {% endif %}
                 </div>
 
               {% endfor %}
@@ -451,11 +457,17 @@
                   class="text-center text-muted py-4"
                 >
                   <h5>No recipient reviews yet</h5>
-
+                  {% if is_own_profile %}
                   <p class="mb-0">
                     Reviews from students who've provided services
                     to you will appear here.
                   </p>
+                  {% else %}
+                  <p class="mb-0">
+                    Reviews from students who've provided services
+                    to this user will appear here.
+                  </p>
+                  {% endif %}
                 </div>
 
               {% endfor %}
