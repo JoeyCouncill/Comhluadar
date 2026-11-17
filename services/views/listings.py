@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.utils import timezone
 from django.core.paginator import Paginator
-from ..forms import *
+from services.forms import CreateListingForm
 from services.models import Listing
 from django.db.models import Q
 from services.forms import CreateListingForm
+from django.db.models import Avg
 
 SORT_OPTIONS = {
     'posted_new': '-created_at',
@@ -39,7 +41,7 @@ def all_listings_view(request):
             Q(service_type__icontains=query)
         )
 
-	# Dropdown Filters
+    # Dropdown Filters
     if service_type in ('offer', 'request'):
         posts = posts.filter(service_type = service_type)
 		
@@ -49,7 +51,7 @@ def all_listings_view(request):
     # Sorting    
     posts = posts.order_by(SORT_OPTIONS.get(sort, '-created_at'))
 
-	# Apply pagination after filtering
+    # Apply pagination after filtering
     paginator = Paginator(posts, 12)
 
     page_obj = paginator.get_page(request.GET.get('page'))
@@ -86,8 +88,30 @@ def new_listing(request):
     })
 
 def listing_detail(request, listing_id):
-    listing = get_object_or_404(Listing.objects.select_related('author__profile'), pk=listing_id)
-    return render(request, 'listing_detail.html', {"listing": listing})
+    listing = get_object_or_404(
+        Listing.objects.select_related('author__profile'),
+        pk=listing_id
+    )
+
+    # Retrieve reviews associated with this listing.
+    reviews = (
+        listing.reviews
+        .select_related('reviewer', 'reviewed_user')
+        .order_by('-created_at')
+    )
+
+    average_rating = reviews.aggregate(
+        average=Avg('rating')
+    )['average']
+
+    context = {
+        'listing': listing,
+        'reviews': reviews,
+        'review_count': reviews.count(),
+        'average_rating': average_rating,
+    }
+
+    return render(request, 'listing_detail.html', context)
 
 def delete_listing(request, listing_id):
     listing = get_object_or_404(Listing, pk=listing_id, author=request.user)
