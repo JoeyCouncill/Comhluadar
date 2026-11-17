@@ -154,4 +154,4 @@ if __name__ == '__main__':
     num_records = int(input('Enter number of entries to generate: '))
     generate_user_profiles(num_records)
     generate_listings(num_records)
-    generate_user_reviews(num_records)
+    #generate_user_reviews(num_records)
