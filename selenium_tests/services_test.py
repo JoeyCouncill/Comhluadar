@@ -242,14 +242,14 @@ class TestListingdetail:
         assert "Offer Test Description" in logged_in_browser.page_source
         assert "seltestuser" in logged_in_browser.page_source
 
-    def test_listing_detail_button_text_offer(self, logged_in_browser, live_server, test_offer_listing) -> None:
+    def test_listing_detail_button_text_offer(self, logged_in_browser, live_server, test_offer_listing, other_user) -> None:
         """
         Detail page detects that listing is an offer and Accept button text updates correctly.
         """
         logged_in_browser.get(live_server.url + reverse('listing_detail', args=[test_offer_listing.pk]))
         assert logged_in_browser.find_element(By.CSS_SELECTOR, "button.btn-primary").text == "Accept this offer"
 
-    def test_listing_detail_button_text_request(self, logged_in_browser, live_server, test_request_listing) -> None:
+    def test_listing_detail_button_text_request(self, logged_in_browser, live_server, test_request_listing, other_user) -> None:
         """
         Detail page detects that listing is a request and Accept button text updates correctly.
         """
