@@ -199,3 +199,138 @@ def test_invalid_sort_falls_back_without_error(client, test_user):
     make_test_post(test_user)
     response = client.get(reverse("all_listings_view"), {"sort": "nonsense"})
     assert response.status_code == 200
+
+
+# ------------------Edit Listing Tests----------------
+@requiresDB
+def test_edit_page_prefills_form_for_owner(client, test_user):
+    post = make_test_post(test_user, title='Original')
+    response = client.get(reverse('edit_listing', args=[post.id]))
+    assert response.status_code == 200
+    assert response.context['form'].instance == post
+
+
+@requiresDB
+def test_owner_can_edit_listing(client, test_user):
+    post = make_test_post(test_user, title='Original', service_type='offer')
+    response = client.post(
+        reverse('edit_listing', args=[post.id]),
+        valid_post_data(title='Updated', service_type='request', category='General Labor'),
+    )
+    assert response.status_code == 302
+    assert response.url == reverse('account_summary')
+    post.refresh_from_db()
+    assert post.title == 'Updated'
+    assert post.service_type == 'request'
+    assert post.category == 'General Labor'
+
+
+@requiresDB
+def test_edit_does_not_create_new_listing(client, test_user):
+    post = make_test_post(test_user)
+    client.post(reverse('edit_listing', args=[post.id]), valid_post_data(title='Updated'))
+    assert Listing.objects.count() == 1
+
+
+@requiresDB
+def test_cannot_edit_another_users_listing(client, test_user, django_user_model):
+    other = django_user_model.objects.create_user(username='other', password='pw12345!')
+    post = make_test_post(other, title='Not Yours')
+    url = reverse('edit_listing', args=[post.id])
+    assert client.get(url).status_code == 404
+    assert client.post(url, valid_post_data(title='Hijacked')).status_code == 404
+    post.refresh_from_db()
+    assert post.title == 'Not Yours'
+
+
+@requiresDB
+def test_edit_nonexistent_listing_returns_404(client, test_user):
+    response = client.get(reverse('edit_listing', args=[99999]))
+    assert response.status_code == 404
+
+
+@requiresDB
+def test_edit_requires_login(client, test_user):
+    post = make_test_post(test_user)
+    client.logout()
+    response = client.get(reverse('edit_listing', args=[post.id]))
+    assert response.status_code == 302
+    assert '/user_login' in response.url
+
+
+@requiresDB
+def test_edit_past_date_is_rejected(client, test_user):
+    post = make_test_post(test_user, title='Original')
+    yesterday = (timezone.localdate() - timedelta(days=1)).isoformat()
+    response = client.post(
+        reverse('edit_listing', args=[post.id]),
+        valid_post_data(title='Updated', date=yesterday),
+    )
+    assert response.status_code == 200
+    assert 'Service date cannot be in the past.' in response.context['form'].errors['date']
+    post.refresh_from_db()
+    assert post.title == 'Original'
+
+
+@requiresDB
+@params("missing_field", ["service_type", "title", "date"])
+def test_edit_required_fields_are_enforced(client, test_user, missing_field):
+    post = make_test_post(test_user, title='Original')
+    data = valid_post_data()
+    data.pop(missing_field)
+    response = client.post(reverse('edit_listing', args=[post.id]), data)
+    assert response.status_code == 200
+    assert missing_field in response.context['form'].errors
+    post.refresh_from_db()
+    assert post.title == 'Original'
+
+
+# ------------------Delete Listing Tests----------------
+@requiresDB
+def test_owner_can_delete_listing(client, test_user):
+    post = make_test_post(test_user)
+    response = client.post(reverse('delete_listing', args=[post.id]))
+    assert response.status_code == 302
+    assert response.url == reverse('account_summary')
+    assert Listing.objects.count() == 0
+
+
+@requiresDB
+def test_delete_only_removes_target_listing(client, test_user):
+    keep = make_test_post(test_user, title='Keep')
+    remove = make_test_post(test_user, title='Remove')
+    client.post(reverse('delete_listing', args=[remove.id]))
+    assert list(Listing.objects.all()) == [keep]
+
+
+@requiresDB
+def test_delete_rejects_get_requests(client, test_user):
+    post = make_test_post(test_user)
+    response = client.get(reverse('delete_listing', args=[post.id]))
+    assert response.status_code == 405
+    assert Listing.objects.count() == 1
+
+
+@requiresDB
+def test_cannot_delete_another_users_listing(client, test_user, django_user_model):
+    other = django_user_model.objects.create_user(username='other', password='pw12345!')
+    post = make_test_post(other, title='Not Yours')
+    response = client.post(reverse('delete_listing', args=[post.id]))
+    assert response.status_code == 404
+    assert Listing.objects.filter(pk=post.pk).exists()
+
+
+@requiresDB
+def test_delete_nonexistent_listing_returns_404(client, test_user):
+    response = client.post(reverse('delete_listing', args=[99999]))
+    assert response.status_code == 404
+
+
+@requiresDB
+def test_delete_requires_login(client, test_user):
+    post = make_test_post(test_user)
+    client.logout()
+    response = client.post(reverse('delete_listing', args=[post.id]))
+    assert response.status_code == 302
+    assert '/user_login' in response.url
+    assert Listing.objects.filter(pk=post.pk).exists()

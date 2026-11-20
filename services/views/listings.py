@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.views.decorators.http import require_POST
 from services.forms import CreateListingForm
 from services.models import Listing
 from django.db.models import Q
@@ -114,6 +115,7 @@ def listing_detail(request, listing_id):
 
     return render(request, 'listing_detail.html', context)
 
+@require_POST
 def delete_listing(request, listing_id):
     listing = get_object_or_404(Listing, pk=listing_id, author=request.user)
     listing.delete()
