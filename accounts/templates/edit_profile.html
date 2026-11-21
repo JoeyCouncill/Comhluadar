@@ -4,9 +4,7 @@
 
 {% block content %}
 <div class="container mt-4">
-
   <h1 class="mb-4">Edit Profile</h1>
-
   <form 
     id="edit-profile-form" 
     method="post" 
@@ -14,7 +12,6 @@
     enctype="multipart/form-data"
   >
     {% csrf_token %}
-
     {% if form.errors %}
       <div class="alert alert-danger" role="alert">
         Please correct the following errors.
@@ -27,7 +24,6 @@
       <label for="profile-picture-input" class="form-label">
         Profile Picture
       </label>
-
       <input
         type="file"
         class="form-control"
@@ -42,7 +38,6 @@
       <label for="cover-photo-input" class="form-label">
         Cover Photo
       </label>
-
       <input
         type="file"
         class="form-control"
@@ -57,13 +52,13 @@
       <label for="first-name-input" class="form-label">
         First Name
       </label>
-
       <input
         type="text"
         class="form-control"
         id="first-name-input"
         name="first_name"
-        value="{{ form.first_name.value|default_if_none:'' }}"      >
+        value="{{ form.first_name.value|default_if_none:'' }}"
+      >
     </div>
 
     <!-- Last Name -->
@@ -71,7 +66,6 @@
       <label for="last-name-input" class="form-label">
         Last Name
       </label>
-
       <input
         type="text"
         class="form-control"
@@ -86,7 +80,6 @@
       <label class="form-label">
         UNO Email
       </label>
-
       <input
         type="email"
         class="form-control"
@@ -100,7 +93,6 @@
       <label class="form-label">
         School
       </label>
-
       <input
         type="text"
         class="form-control"
@@ -114,20 +106,19 @@
       <label for="skills-select" class="form-label">
         Skills
       </label>
-
       <select
         class="form-select"
         id="skills-select"
         name="skills"
       >
         {% for value, label in form.fields.skills.choices %}
-        <option
-          value="{{ value }}"
-          {% if form.skills.value == value %}selected{% endif %}
-        >
-          {{ label }}
-        </option>
-      {% endfor %}
+          <option
+            value="{{ value }}"
+            {% if form.skills.value == value %}selected{% endif %}
+          >
+            {{ label }}
+          </option>
+        {% endfor %}
       </select>
     </div>
 
@@ -140,7 +131,6 @@
       <label for="other-skill-input" class="form-label">
         Other Skill
       </label>
-
       <input
         type="text"
         class="form-control"
@@ -156,7 +146,6 @@
       <label for="interests-input" class="form-label">
         Interests
       </label>
-
       <input
         type="text"
         class="form-control"
@@ -172,7 +161,6 @@
       <label for="bio-input" class="form-label">
         About Me
       </label>
-
       <textarea
         class="form-control"
         id="bio-input"
@@ -180,8 +168,9 @@
         rows="5"
         maxlength="500"
         placeholder="Tell other UNO students a little about yourself."
-      >{{ form.bio.value|default_if_none:'' }}</textarea>
-
+      >
+        {{ form.bio.value|default_if_none:'' }}
+      </textarea>
       <div class="form-text">
         Maximum 500 characters.
       </div>
@@ -195,7 +184,6 @@
     >
       Save Changes
     </button>
-
     <a
       href="{% url 'account_summary' %}"
       class="btn btn-secondary"
@@ -203,9 +191,7 @@
     >
       Cancel
     </a>
-
   </form>
-
 </div>
 
 <script>
