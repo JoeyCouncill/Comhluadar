@@ -12,7 +12,7 @@
         <div class="card-body">
 
             <!-- Listing Type -->
-            <span class="badge {% if listing.service_type == 'offer' %}bg-success{% else %}bg-warning text-dark{% endif %} mb-2">
+            <span class="badge {% if listing.service_type == 'offer' %}bg-success{% else %}bg-info text-dark{% endif %} mb-2">
                 {{ listing.get_service_type_display }}
             </span>
 
@@ -32,14 +32,14 @@
                 {{ listing.date|date:"F j, Y" }}
             </p>
 
-            <a href="{% url 'user_profile' listing.author.pk %}"
-               class="text-decoration-none">
-                {{ listing.author.profile.display_name }}
-            </a>
+            
 
             <p class="mb-1">
                 <strong>Posted by:</strong>
-                {{ listing.author.profile.display_name }}
+                <a href="{% url 'user_profile' listing.author.pk %}"
+                class="text-decoration-none">
+                    {{ listing.author.profile.display_name }}
+                </a>
             </p>
 
             <p class="mb-0">
@@ -172,7 +172,7 @@
                 <div class="d-flex gap-2">
 
                 <a
-                    href="{% url 'edit_listing' listing.id %}"
+                    href="{% url 'edit_listing' listing.id %}?next={{ request.get_full_path|urlencode }}"
                     class="btn btn-primary"
                     id="edit-listing-button">
                     Edit

@@ -4,11 +4,13 @@ from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
+from django.db.models import Q
+from django.db.models import Avg
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from services.forms import CreateListingForm
 from services.models import Listing
-from django.db.models import Q
 from services.forms import CreateListingForm
-from django.db.models import Avg
 
 SORT_OPTIONS = {
     'posted_new': '-created_at',
@@ -123,8 +125,15 @@ def delete_listing(request, listing_id):
 
 def edit_listing(request, listing_id):
     listing = get_object_or_404(Listing, pk=listing_id, author=request.user)
+    return_url = (request.POST.get("next") if request.method == "POST" else request.GET.get("next"))
+    if not url_has_allowed_host_and_scheme(
+        return_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return_url = reverse("account_summary")
     form = CreateListingForm(request.POST or None, instance=listing)
     if request.method == "POST" and form.is_valid():
         form.save()
-        return redirect("account_summary")  # your profile url name
-    return render(request, "edit_listing.html", {"form": form, "listing": listing})
+        return redirect(return_url)  # your profile url name
+    return render(request, "edit_listing.html", {"form": form, "listing": listing, "return_url": return_url})

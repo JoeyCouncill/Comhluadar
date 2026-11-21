@@ -16,7 +16,7 @@
   <!-- Edit listing Form -->
   <form method="POST" class="border p-4 rounded bg-light shadow-sm" id="edit-listing-form">
     {% csrf_token %}
-
+    <input type="hidden" name="next" value="{{ return_url }}">
     {% if form.non_field_errors %}
       <div class="alert alert-danger">{{ form.non_field_errors }}</div>
     {% endif %}
@@ -67,7 +67,7 @@
     </div>
 
     <button type="submit" class="btn btn-success" id="save-listing-button">Save Changes</button>
-    <a href="{% url 'account_summary' %}" class="btn btn-outline-secondary" id="cancel-edit-button">Cancel</a>
+    <a href="{{ return_url }}" class="btn btn-outline-secondary" id="cancel-edit-button">Cancel</a>
   </form>
 </div>
 {% endblock %}

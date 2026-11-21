@@ -488,51 +488,58 @@
     <div class="tab-pane fade" id="listings-pane" role="tabpanel">
       <div class="card shadow-sm mb-4">
         <div class="card-body">
-
           <h4 class="mb-3">My listings</h4>
-
           {% if listings %}
-            {% for listing in listings %}
-              <div class="border rounded p-3 mb-3" id="listing-{{ listing.id }}">
-                <div class="d-flex justify-content-between align-items-start">
+            <div class="list-group"></div>
+              {% for listing in listings %}
+                <div class="list-group-item list-group-item-action position-relative border rounded p-3 mb-3" 
+                  id="listing-{{ listing.id }}" 
+                  style="--bs-list-group-action-hover-bg: var(--bs-secondary-bg);">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <a href="{% url 'listing_detail' listing.id %}" 
+                      class="d-block text-decoration-none text-reset stretched-link">
+                      <div>
+                        <span class="fw-bold">
+                          {{ listing.title }}
+                        </span>
+                        <span class="badge 
+                          {% if listing.service_type == 'offer' %}bg-success{% else %}
+                            bg-info text-dark
+                          {% endif %} ms-2">
+                          {{ listing.get_service_type_display }}
+                        </span>
+                        {% if listing.category %}
+                          <span class="badge bg-light text-dark border ms-1">{{ listing.category }}</span>
+                        {% endif %}
 
-                  <div>
-                    <a href="{% url 'listing_detail' listing.id %}" class="fw-bold text-decoration-none">
-                      {{ listing.title }}
+                        <div class="text-muted small">
+                          For {{ listing.date|date:"M j, Y" }} · posted {{ listing.created_at|date:"M j, Y" }}
+                        </div>
+                        {% if listing.description %}
+                          <p class="mt-2 mb-0">{{ listing.description|truncatechars:120 }}</p>
+                        {% endif %}
+                      </div>
                     </a>
-                    <span class="badge {% if listing.service_type == 'offer' %}bg-success{% else %}bg-info text-dark{% endif %} ms-2">
-                      {{ listing.get_service_type_display }}
-                    </span>
-                    {% if listing.category %}
-                      <span class="badge bg-light text-dark border ms-1">{{ listing.category }}</span>
-                    {% endif %}
 
-                    <div class="text-muted small">
-                      For {{ listing.date|date:"M j, Y" }} · posted {{ listing.created_at|date:"M j, Y" }}
+                    <div class="d-flex gap-2 position-relative z-2">
+                      <a href="{% url 'edit_listing' listing.id %}?next={{ request.get_full_path|add:'#listings-pane'|urlencode }}"
+                        class="btn btn-sm btn-outline-primary"
+                        id="edit-listing-{{ listing.id }}">Edit</a>
+
+                      <form method="post"
+                            action="{% url 'delete_listing' listing.id %}"
+                            onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="btn btn-sm btn-outline-danger"
+                                id="delete-listing-{{ listing.id }}">Delete</button>
+                      </form>
                     </div>
-                    {% if listing.description %}
-                      <p class="mt-2 mb-0">{{ listing.description|truncatechars:120 }}</p>
-                    {% endif %}
+
                   </div>
-
-                  <div class="d-flex gap-2">
-                    <a href="{% url 'edit_listing' listing.id %}"
-                       class="btn btn-sm btn-outline-primary"
-                       id="edit-listing-{{ listing.id }}">Edit</a>
-
-                    <form method="post"
-                          action="{% url 'delete_listing' listing.id %}"
-                          onsubmit="return confirm('Are you sure you want to delete this listing?');">
-                      {% csrf_token %}
-                      <button type="submit"
-                              class="btn btn-sm btn-outline-danger"
-                              id="delete-listing-{{ listing.id }}">Delete</button>
-                    </form>
-                  </div>
-
                 </div>
-              </div>
-            {% endfor %}
+              {% endfor %}
+            </div>
           {% else %}
             <div id="no-listings-message" class="text-center text-muted py-4">
               <h5>No active listings</h5>
@@ -549,5 +556,15 @@
 
 </div>
 <!-- End Container -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.location.hash === "#listings-pane") {
+      const listingsTab = document.getElementById("listings-tab");
 
+      if (listingsTab) {
+        bootstrap.Tab.getOrCreateInstance(listingsTab).show();
+      }
+    }
+  });
+</script>
 {% endblock %}
