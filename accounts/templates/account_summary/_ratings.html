@@ -1,0 +1,194 @@
+<!-- RATINGS TAB -->
+<div
+    class="tab-pane fade"
+    id="ratings-pane"
+    role="tabpanel"
+    aria-labelledby="ratings-tab"
+>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <!-- Ratings Header -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">
+          Ratings & Reviews
+        </h4>
+        {% if review_count > 0 %}
+          <div class="text-end">    
+            <span class="fs-5 fw-bold">
+              ★ {{ average_rating|floatformat:1 }}
+            </span>
+            <div class="small text-muted">
+              {{ review_count }}
+              review{{ review_count|pluralize }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Provider / Recipient Review Tabs -->
+      <ul
+        class="nav nav-pills mb-3"
+        id="review-role-tabs"
+        role="tablist"
+      >
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="provider-reviews-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#provider-reviews-pane"
+            type="button"
+            role="tab"
+            aria-controls="provider-reviews-pane"
+            aria-selected="true"
+          >
+            As Provider ({{ provider_review_count }})
+          </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="recipient-reviews-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#recipient-reviews-pane"
+            type="button"
+            role="tab"
+            aria-controls="recipient-reviews-pane"
+            aria-selected="false"
+          >
+            As Recipient ({{ recipient_review_count }})
+          </button>
+        </li>
+      </ul>
+
+      <!-- Review Tab Content -->
+      <div class="tab-content" id="review-role-tab-content">
+
+        <!-- PROVIDER REVIEWS -->
+        <div
+          class="tab-pane fade show active"
+          id="provider-reviews-pane"
+          role="tabpanel"
+          aria-labelledby="provider-reviews-tab"
+        >
+          {% for review in provider_reviews %}
+            <div
+              class="border rounded p-3 mb-3"
+              id="review-{{ review.id }}"
+            >
+
+              <!-- Reviewer and Rating -->
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <strong>
+                    {% if review.reviewer.get_full_name %}
+                      {{ review.reviewer.get_full_name }}
+                    {% else %}
+                      {{ review.reviewer.username }}
+                    {% endif %}
+                  </strong>
+                    <div class="text-muted small">
+                      {{ review.created_at|date:"M j, Y" }}
+                    </div>
+                  <div class="small text-muted">
+                    Service: {{ review.listing.title }}
+                  </div>
+                </div>
+                <div class="fw-bold">
+                  ★ {{ review.rating }}/5
+                </div>
+              </div>
+              <!-- Review Comment -->
+              {% if review.comment %}
+                <p class="mt-3 mb-0">
+                  {{ review.comment|linebreaksbr }}
+                </p>
+              {% endif %}
+            </div>
+          {% empty %}
+          <div
+            id="no-provider-reviews-message"
+            class="text-center text-muted py-4"
+          >
+            <h5>No provider reviews yet</h5>
+            {% if is_own_profile %}
+              <p class="mb-0">
+                Reviews from students you've provided services to
+                will appear here.
+              </p>
+            {% else %}
+              <p class="mb-0">
+                Reviews from students this user has provided services to
+                will appear here.
+              </p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- RECIPIENT REVIEWS -->
+        <div
+          class="tab-pane fade"
+          id="recipient-reviews-pane"
+          role="tabpanel"
+          aria-labelledby="recipient-reviews-tab"
+        >
+          {% for review in recipient_reviews %}
+            <div
+              class="border rounded p-3 mb-3"
+              id="review-{{ review.id }}"
+            >
+              <!-- Reviewer and Rating -->
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <strong>
+                    {% if review.reviewer.get_full_name %}
+                      {{ review.reviewer.get_full_name }}
+                    {% else %}
+                      {{ review.reviewer.username }}
+                    {% endif %}
+                  </strong>
+                  <div class="text-muted small">
+                    {{ review.created_at|date:"M j, Y" }}
+                  </div>
+                  <div class="small text-muted">
+                    Service: {{ review.listing.title }}
+                  </div>
+                </div>
+              <div class="fw-bold">
+                ★ {{ review.rating }}/5
+              </div>
+            </div>
+              <!-- Review Comment -->
+              {% if review.comment %}
+                <p class="mt-3 mb-0">
+                  {{ review.comment|linebreaksbr }}
+                </p>
+              {% endif %}
+            </div>
+            {% empty %}
+            <div
+              id="no-recipient-reviews-message"
+              class="text-center text-muted py-4"
+            >
+              <h5>No recipient reviews yet</h5>
+              {% if is_own_profile %}
+                <p class="mb-0">
+                  Reviews from students who've provided services
+                  to you will appear here.
+                </p>
+              {% else %}
+                <p class="mb-0">
+                  Reviews from students who've provided services
+                  to this user will appear here.
+                </p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- End Review Tab Content -->
+    </div>
+  </div>
+</div>

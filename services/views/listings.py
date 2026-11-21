@@ -1,12 +1,16 @@
+from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.views.decorators.http import require_POST
+from django.db.models import Q
+from django.db.models import Avg
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from services.forms import CreateListingForm
 from services.models import Listing
-from django.db.models import Q
 from services.forms import CreateListingForm
-from django.db.models import Avg
 
 SORT_OPTIONS = {
     'posted_new': '-created_at',
@@ -14,6 +18,11 @@ SORT_OPTIONS = {
     'service_soon': 'date',
     'service_late': '-date',
 }
+
+class ListingForm(forms.ModelForm):
+    class Meta:
+        model = Listing
+        fields = ["service_type", "title", "description", "category", "date"]
 
 def all_listings_view(request):
 	
@@ -107,3 +116,24 @@ def listing_detail(request, listing_id):
     }
 
     return render(request, 'listing_detail.html', context)
+
+@require_POST
+def delete_listing(request, listing_id):
+    listing = get_object_or_404(Listing, pk=listing_id, author=request.user)
+    listing.delete()
+    return redirect("account_summary")
+
+def edit_listing(request, listing_id):
+    listing = get_object_or_404(Listing, pk=listing_id, author=request.user)
+    return_url = (request.POST.get("next") if request.method == "POST" else request.GET.get("next"))
+    if not url_has_allowed_host_and_scheme(
+        return_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return_url = reverse("account_summary")
+    form = CreateListingForm(request.POST or None, instance=listing)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect(return_url)  # your profile url name
+    return render(request, "edit_listing.html", {"form": form, "listing": listing, "return_url": return_url})

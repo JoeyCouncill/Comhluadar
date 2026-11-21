@@ -13,7 +13,6 @@
 
   <form method="POST" class="border p-4 rounded bg-light shadow-sm">
     {% csrf_token %}
-
     {% if messages %}
       {% for message in messages %}
         <div class="alert alert-info">
@@ -21,7 +20,6 @@
         </div>
       {% endfor %}
     {% endif %}
-
     <div class="mb-3">
       <label for="firstName" class="form-label">First Name</label>
       <input

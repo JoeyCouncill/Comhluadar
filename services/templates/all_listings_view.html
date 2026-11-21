@@ -7,12 +7,12 @@
   <form method="get" action="{% url 'all_listings_view' %}" class="row g-2 mb-4 align-items-end">
     <div class="col-12">
       <input
-            type="text"
-            name="search"
-            style="width: 100%;"
-            placeholder="Search by listing type, title, description, category ..."
-            value="{{ query }}"
-        >
+        type="text"
+        name="search"
+        style="width: 100%;"
+        placeholder="Search by listing type, title, description, category ..."
+        value="{{ query }}"
+      >
     </div>
     <div class="col-md-3">
       <label class="form-label small text-muted mb-1">Listing Type</label>
@@ -45,14 +45,13 @@
       <a href="{% url 'all_listings_view' %}" class="btn btn-outline-secondary">Reset</a>
     </div>
   </form>
-
   {% if page_obj.object_list %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       {% for listing in page_obj %}
         <div class="col">
           <div class="card h-100 shadow-sm">
             <div class="card-body">
-              <span class="badge {% if listing.service_type == 'offer' %}bg-success{% else %}bg-warning text-dark{% endif %} mb-2">
+              <span class="badge {% if listing.service_type == 'offer' %}bg-success{% else %}bg-info text-dark{% endif %} mb-2">
                 {{ listing.get_service_type_display }}
               </span>
               <h5 class="card-title">{{ listing.title }}</h5>
@@ -61,7 +60,7 @@
             </div>
             <div class="card-footer d-flex justify-content-between align-items-center">
               <small class="text-muted">
-                {{ listing.author.profile.display_name }} &middot; {{ listing.created_at|date:"M j, Y" }}
+                <a href="{% url 'user_profile' listing.author.pk %}" class="text-decoration-none">{{ listing.author.profile.display_name }}</a> &middot; {{ listing.created_at|date:"M j, Y" }}
               </small>
               <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-sm btn-outline-primary">View</a>
             </div>
@@ -81,11 +80,9 @@
           {% else %}
             <li class="page-item disabled"><span class="page-link">Previous</span></li>
           {% endif %}
-
           <li class="page-item disabled">
             <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
           </li>
-
           {% if page_obj.has_next %}
             <li class="page-item">
               <a class="page-link" href="{% querystring page=page_obj.next_page_number %}">Next</a>

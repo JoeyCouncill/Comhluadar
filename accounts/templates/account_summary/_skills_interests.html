@@ -1,0 +1,37 @@
+<!-- SKILLS & INTERESTS TAB -->
+<div
+    class="tab-pane fade"
+    id="skills-pane"
+    role="tabpanel"
+    aria-labelledby="skills-tab"
+>
+  <!-- Skills -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+      <h4>Skills</h4>
+
+        <div id="profile-skills">
+          <span class="badge bg-secondary me-2">
+            {% if profile_user.profile.skills == "Other" %}
+            {{ profile_user.profile.other_skill }}
+            {% else %}
+            {{ profile_user.profile.get_skills_display|default:"No skills added yet." }}
+            {% endif %}
+          </span>
+        </div>
+    </div>
+  </div>
+
+  <!-- Interests -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>Interests</h4>
+      <div id="profile-interests">
+        <span class="badge bg-light text-dark border me-2">
+          {{ profile_user.profile.interests|default:"No interests added yet." }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -40,20 +40,20 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'inbox' %}"> Inbox </a>
         </li>
-{% if user.is_authenticated %}
-    <li class="nav-item">
-        <form method="POST" action="{% url 'logout' %}">
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <form method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit" class="nav-link btn btn-link">
-                Logout
+              Logout
             </button>
-        </form>
-    </li>
-{% else %}
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'login' %}">Login</a>
-    </li>
-{% endif %}
+          </form>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+      {% endif %}
       </ul>
     </div>
 

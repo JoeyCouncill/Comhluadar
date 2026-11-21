@@ -1,9 +1,8 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_not_required
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Avg
-
 from accounts.forms import EditProfileForm
 from services.models import Review
 
@@ -13,11 +12,14 @@ def front_page(request):
     return render(request, "index.html")
 
 
+def account_summary(request, user_id=None):
+    profile_user = get_object_or_404(User, pk=user_id) if user_id else request.user
 
-def account_summary(request):
+    is_own_profile = profile_user == request.user
+
     reviews = (
         Review.objects
-        .filter(reviewed_user=request.user)
+        .filter(reviewed_user=profile_user)
         .select_related("reviewer", "listing")
         .order_by("-created_at")
     )
@@ -44,7 +46,13 @@ def account_summary(request):
         "review_count": reviews.count(),
         "provider_review_count": provider_reviews.count(),
         "recipient_review_count": recipient_reviews.count(),
+        "profile_user": profile_user,
+        "is_own_profile": is_own_profile,
     }
+
+    if is_own_profile:
+        context['listings'] = request.user.listings.order_by(
+        "-created_at")
 
     return render(
         request,

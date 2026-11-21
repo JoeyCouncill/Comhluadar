@@ -5,19 +5,18 @@
   <h1 class="mb-4 text-primary">Offer or Request Services</h1>
 
   <!-- Display success/error messages, if any -->
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-info"
-             style="white-space: pre-line;">
-          {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-info"
+        style="white-space: pre-line;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
 
   <!-- New listing Form -->
   <form method="POST" class="border p-4 rounded bg-light shadow-sm">
     {% csrf_token %}
-
     <div class="mb-3">
       <label for="service_type" class="form-label">
         Service Type

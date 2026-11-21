@@ -32,6 +32,22 @@ def test_user(django_user_model):
     return user
 
 @pytest.fixture
+def other_user(django_user_model):
+    user = django_user_model.objects.create_user(
+        username="seltestuser2@example.com",
+        password="T3stp@ssword4Sel2",
+        email="seltestuser2@example.com",
+        first_name="Sel2",
+        last_name="Tester",
+    )
+    profile, _ = Profile.objects.get_or_create(user=user)
+    profile.skills = "Technology"
+    profile.interests = "Test interests for selenium"
+    profile.bio = "Test bio for selenium."
+    profile.save()
+    return user
+
+@pytest.fixture
 def logged_in_browser(browser, live_server, test_user):
     browser.get(live_server.url + '/user_login/')
     browser.find_element(By.NAME, "email").send_keys("seltestuser@example.com")
@@ -43,9 +59,9 @@ def logged_in_browser(browser, live_server, test_user):
     return browser
 
 @pytest.fixture
-def test_offer_listing(test_user):
+def test_offer_listing(other_user):
     return Listing.objects.create(
-        author = test_user,
+        author = other_user,
         title = "Selenium Test Offer Listing",
         description = "Offer Test Description",
         service_type = "offer",
@@ -54,9 +70,9 @@ def test_offer_listing(test_user):
     )
 
 @pytest.fixture
-def test_request_listing(test_user):
+def test_request_listing(other_user):
     return Listing.objects.create(
-        author=test_user,
+        author=other_user,
         title="Selenium Test Request Listing",
         description="Request Test Description",
         service_type="request",

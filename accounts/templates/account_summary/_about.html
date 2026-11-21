@@ -1,0 +1,15 @@
+<div
+  class="tab-pane fade show active"
+  id="about-pane"
+  role="tabpanel"
+  aria-labelledby="about-tab"
+>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>About Me</h4>
+      <p id="profile-bio" class="mb-0">
+        {{ profile_user.profile.bio|default:"No bio added yet."|linebreaksbr }}
+      </p>
+    </div>
+  </div>
+</div>

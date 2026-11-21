@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Edit listing{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4 text-primary">Edit Listing</h1>
+  <!-- Display success/error messages, if any -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-info" style="white-space: pre-line;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+  <!-- Edit listing Form -->
+  <form method="POST" class="border p-4 rounded bg-light shadow-sm" id="edit-listing-form">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ return_url }}">
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="mb-3">
+      <label for="service_type" class="form-label">Service Type</label>
+      <select id="service_type" name="service_type" class="form-select" required>
+        <option value="offer" {% if form.service_type.value == 'offer' %}selected{% endif %}>Offer a Service</option>
+        <option value="request" {% if form.service_type.value == 'request' %}selected{% endif %}>Request a Service</option>
+      </select>
+        {% for error in form.service_type.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="mb-3">
+      <label for="title" class="form-label">Service Description</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        class="form-control"
+        value="{{ form.title.value|default:'' }}"
+        required
+      />
+      {% for error in form.title.errors %} 
+        <div class="text-danger small">
+          {{ error }} 
+        </div>
+      {% endfor %}
+    </div>
+    <div class="mb-3">
+      <label for="category" class="form-label">Service Category</label>
+      <select id="category" name="category" class="form-select" required>
+        <option value="Tutoring" {% if form.category.value == 'Tutoring' %}selected{% endif %}>Tutoring</option>
+        <option value="Specialized Labor" {% if form.category.value == 'Specialized Labor' %}selected{% endif %}>Specialized Labor</option>
+        <option value="General Labor" {% if form.category.value == 'General Labor' %}selected{% endif %}>General Labor</option>
+      </select>
+      {% for error in form.category.errors %}
+        <div class="text-danger small">
+          {{ error }}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="mb-3">
+      <label for="date" class="form-label">Service Date</label>
+      <input
+        type="date"
+        id="date"
+        name="date"
+        class="form-control"
+        value="{{ form.date.value|date:'Y-m-d'|default:form.date.value }}"
+        required
+      />
+      {% for error in form.date.errors %}
+        <div class="text-danger small">
+          {{ error }}
+        </div>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-success" id="save-listing-button">Save Changes</button>
+    <a href="{{ return_url }}" class="btn btn-outline-secondary" id="cancel-edit-button">Cancel</a>
+  </form>
+</div>
+{% endblock %}
