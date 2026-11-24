@@ -77,22 +77,16 @@ def test_profile_displays_provider_reviews(client, review_data):
 
 
 @pytest.mark.django_db
-def test_listing_displays_both_reviews(client, review_data):
+def test_listing_displays_only_the_reviews_of_author(client, review_data):
     listing = review_data["listing"]
-
-    response = client.get(
-        reverse("listing_detail", args=[listing.pk])
-    )
+    response = client.get(reverse("listing_detail", args=[listing.pk]))
 
     assert response.status_code == 200
-    assert response.context["review_count"] == 2
-    assert response.context["average_rating"] == 4.5
-
-    content = response.content.decode()
-
-    assert "Excellent tutoring!" in content
-    assert "Great communication!" in content
-    assert "Demo Recipient" in content
+    assert list(response.context["reviews"]) == [review_data["provider_review"]]
+    assert response.context["review_count"] == 1
+    assert response.context["average_rating"] == 5
+    assert b"Excellent tutoring!" in response.content
+    assert b"Great communication!" not in response.content
 
 
 @pytest.mark.django_db

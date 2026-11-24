@@ -1,0 +1,31 @@
+{% load engagement_tags %}
+{% listing_request_for_chat chat user as item %}
+{% if item %}
+  <section class="border rounded p-3 mb-3" aria-labelledby="chat-listing-title">
+    <h2 id="chat-listing-title" class="h5">
+      <a href="{% url 'listing_detail' item.listing_id %}">{{ item.listing.title }}</a>
+    </h2>
+    <p>{{ item.status_label }}</p>
+    {% include "services/reopen_request_form.html" %}
+    {% if item.can_decide %}
+      {% if user.pk == item.listing.author_id and item.author_agreed_at or user.pk == item.requester_id and item.requester_agreed_at %}
+        <p>You agreed. Waiting for the other participant.</p>
+      {% elif item.author_agreed_at or item.requester_agreed_at %}
+        <p>The other participant agreed. Your decision is pending.</p>
+      {% endif %}
+      <form method="post"
+        action="{% url 'decide_engagement_request' item.listing_id item.pk %}"
+        class="d-flex gap-2"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="decision_round" value="{{ item.decision_round }}">
+        <button type="submit" name="decision" value="agree" class="btn btn-primary">
+          Agree
+        </button>
+        <button type="submit" name="decision" value="decline" class="btn btn-outline-danger">
+          Decline
+        </button>
+      </form>
+    {% endif %}
+  </section>
+{% endif %}

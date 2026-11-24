@@ -1,16 +1,18 @@
-from django import forms
+from contextlib import nullcontext
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_POST
+from django.db import transaction
 from django.db.models import Q
 from django.db.models import Avg
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from services.forms import CreateListingForm
 from services.models import Listing
-from services.forms import CreateListingForm
+from services.engagements import current_listing_request
 
 SORT_OPTIONS = {
     'posted_new': '-created_at',
@@ -19,22 +21,16 @@ SORT_OPTIONS = {
     'service_late': '-date',
 }
 
-class ListingForm(forms.ModelForm):
-    class Meta:
-        model = Listing
-        fields = ["service_type", "title", "description", "category", "date"]
 
 def all_listings_view(request):
 	
-    query = request.GET.get('search', '').strip()
+    query = request.GET.get('search', '').strip()[:200]
     service_type = request.GET.get('type', '')
     category = request.GET.get('category', '')
     sort = request.GET.get('sort', 'posted_new')
 
-    # Get all posts by default
-    posts = Listing.objects.all().select_related(
-        'author__profile'
-    ).order_by('-created_at')
+    # Get all non engaged posts by default
+    posts = (Listing.objects.filter(engagement__isnull=True).select_related("author__profile").order_by("-created_at"))
 
     # Filter posts when search keyword is entered
     if query:
@@ -66,6 +62,7 @@ def all_listings_view(request):
         'categories': Listing._meta.get_field('category').choices,
     })
 
+
 def new_listing(request):
     if request.method == 'POST':
         form = CreateListingForm(request.POST)
@@ -86,54 +83,77 @@ def new_listing(request):
     else:
         form = CreateListingForm()
     
-    return render(request, 'new_listing.html', {
-        'form': form,
-    	'today': timezone.localdate().isoformat(),
-    })
+    return render(request, 'new_listing.html', {'form': form, 'today': timezone.localdate().isoformat()})
+
 
 def listing_detail(request, listing_id):
-    listing = get_object_or_404(
-        Listing.objects.select_related('author__profile'),
-        pk=listing_id
-    )
+    listing = get_object_or_404(Listing.objects.select_related("author__profile", "engagement"), pk=listing_id)
 
-    # Retrieve reviews associated with this listing.
     reviews = (
         listing.reviews
-        .select_related('reviewer', 'reviewed_user')
-        .order_by('-created_at')
+        .filter(reviewed_user_id=listing.author_id)
+        .select_related("reviewer", "reviewed_user")
+        .order_by("-created_at")
     )
-
-    average_rating = reviews.aggregate(
-        average=Avg('rating')
-    )['average']
+    
+    average_rating = reviews.aggregate(average=Avg("rating"))["average"]
 
     context = {
-        'listing': listing,
-        'reviews': reviews,
-        'review_count': reviews.count(),
-        'average_rating': average_rating,
+        "listing": listing,
+        "reviews": reviews,
+        "review_count": reviews.count(),
+        "average_rating": average_rating,
+        "listing_engaged": hasattr(listing, "engagement"),
     }
 
-    return render(request, 'listing_detail.html', context)
+    if request.user.pk == listing.author_id:
+        context["listing_requests"] = (
+            listing.engagement_requests
+            .select_related("requester__profile", "listing__engagement")
+            .order_by("-created_at", "-pk")
+        )
+    elif request.user.is_authenticated:
+        context["my_request"] = current_listing_request(listing.pk, request.user.pk)
+
+    return render(request, "listing_detail.html", context)
+
 
 @require_POST
+@transaction.atomic
 def delete_listing(request, listing_id):
-    listing = get_object_or_404(Listing, pk=listing_id, author=request.user)
+    listing = get_object_or_404(Listing.objects.select_for_update(), pk=listing_id, author=request.user)
+
+    if hasattr(listing, "engagement"):
+        raise PermissionDenied("A listing with an engagement cannot be deleted.")
+
     listing.delete()
     return redirect("account_summary")
 
+
 def edit_listing(request, listing_id):
-    listing = get_object_or_404(Listing, pk=listing_id, author=request.user)
-    return_url = (request.POST.get("next") if request.method == "POST" else request.GET.get("next"))
+    is_post = request.method == "POST"
+    return_url = request.POST.get("next") if is_post else request.GET.get("next")
+
     if not url_has_allowed_host_and_scheme(
         return_url,
         allowed_hosts={request.get_host()},
         require_https=request.is_secure(),
     ):
         return_url = reverse("account_summary")
-    form = CreateListingForm(request.POST or None, instance=listing)
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        return redirect(return_url)  # your profile url name
+
+    with transaction.atomic() if is_post else nullcontext():
+        listings = Listing.objects.filter(author=request.user)
+        if is_post:
+            listings = listings.select_for_update()
+
+        listing = get_object_or_404(listings, pk=listing_id)
+        form = CreateListingForm(request.POST if is_post else None, instance=listing)
+
+        if hasattr(listing, "engagement"):
+            form.fields["service_type"].disabled = True
+
+        if is_post and form.is_valid():
+            form.save()
+            return redirect(return_url)
+
     return render(request, "edit_listing.html", {"form": form, "listing": listing, "return_url": return_url})

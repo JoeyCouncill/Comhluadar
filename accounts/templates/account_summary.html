@@ -1,7 +1,7 @@
 
 {% extends 'base.html' %}
 
-{% block title %}{% if is_own_profile %}My Profile{% else %}{{ profile_user.get_full_name|default:profile_user.username }}{% endif %}{% endblock %}
+{% block title %}{% if is_own_profile %}My Profile{% else %}{{ profile_user.profile.display_name }}{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -160,6 +160,21 @@
         {% endif %}
       </button>
     </li>
+
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="engagements-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#engagements-pane"
+        type="button"
+        role="tab"
+        aria-controls="engagements-pane"
+        aria-selected="false"
+      >
+        Engagements
+      </button>
+    </li>
   {% endif %}
   </ul>
 
@@ -178,17 +193,19 @@
     <!-- LISTINGS TAB -->
       {% if is_own_profile %}
         {% include "account_summary/_listings.html" %}
+        {% include "account_summary/_engagements.html" %}
       {% endif %}
   </div>
 </div>
 <!-- End Container -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    if (window.location.hash === "#listings-pane") {
-      const listingsTab = document.getElementById("listings-tab");
-
-      if (listingsTab) {
-        bootstrap.Tab.getOrCreateInstance(listingsTab).show();
+    const tabIds = {"#listings-pane": "listings-tab", "#engagements-pane": "engagements-tab"};
+    const tabId = tabIds[window.location.hash];
+    if (tabId) {
+      const tab = document.getElementById(tabId);
+      if (tab) {
+        bootstrap.Tab.getOrCreateInstance(tab).show();
       }
     }
   });

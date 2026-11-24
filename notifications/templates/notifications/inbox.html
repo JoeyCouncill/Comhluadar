@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<h1>Notifications</h1>
+
+{% for notice in notifications %}
+  <div class="border rounded p-3 mb-2">
+    <p>{{ notice.text }}</p>
+    <form method="post" action="{% url 'notifications:open' notice.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-primary">
+        {% if notice.target_url %}Open{% else %}Dismiss{% endif %}
+      </button>
+    </form>
+  </div>
+{% empty %}
+  <p>No unread notifications.</p>
+{% endfor %}
+{% endblock %}

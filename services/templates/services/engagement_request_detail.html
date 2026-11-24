@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Engagement request{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <a href="{% url 'listing_detail' item.listing_id %}"
+    class="d-inline-block mb-3"
+  >
+    Back to listing
+  </a>
+  <div class="card">
+    <div class="card-body">
+      <h1 class="h3">{{ item.listing.title }}</h1>
+      <p class="mb-1">
+        Requested by {% include "accounts/_profile_link.html" with person=item.requester only %}
+      </p>
+      <p>{{ item.status_label }}</p>
+      {% if item.is_open and user.pk == item.listing.author_id %}
+        <form method="post"
+          action="{% url 'start_engagement_chat' item.listing_id item.pk %}"
+        >
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Start chat</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

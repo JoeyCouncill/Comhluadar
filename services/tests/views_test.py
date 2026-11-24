@@ -49,7 +49,7 @@ def test_new_post_page_shows_form_fields(client, test_user):
     response = client.get(reverse("new_listing"))
     assert response.status_code == 200
     form = response.context["form"]
-    assert list(form.fields) == ["service_type", "title", "category", "date"]
+    assert list(form.fields) == ["service_type", "title", "description", "category", "date"]
     assert response.context["today"] == timezone.localdate().isoformat()
 
 
