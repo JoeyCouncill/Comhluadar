@@ -89,7 +89,7 @@ jobs:
 
         APP_DIR=/home/ubuntu/application/Comhluadar
         VENV_DIR=/home/ubuntu/miniconda3/envs/comhluadar
-        ENV_FILE=/home/ubuntu/application/comhluadar.env
+        ENV_FILE=/home/ubuntu/application/Comhluadar/.env
         SERVICE=gunicorn.service
 
         cd "$APP_DIR"
