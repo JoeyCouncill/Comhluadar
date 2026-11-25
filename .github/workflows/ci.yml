@@ -87,9 +87,9 @@ jobs:
         "bash -s -- '$GITHUB_SHA'" <<'DEPLOY'
         set -euo pipefail
 
-        APP_DIR=/home/ubuntu/Comhluadar
-        VENV_DIR=/home/ubuntu/Comhluadar/.venv
-        ENV_FILE=/etc/comhluadar/comhluadar.env
+        APP_DIR=/home/ubuntu/application/Comhluadar
+        VENV_DIR=/home/ubuntu/miniconda3/envs/comhluadar
+        ENV_FILE=/home/ubuntu/application/comhluadar.env
         SERVICE=gunicorn.service
 
         cd "$APP_DIR"
