@@ -112,8 +112,8 @@ jobs:
             --retry 5 --retry-all-errors --retry-delay 3 \
             --connect-timeout 10 --max-time 30 \
             --output /dev/null https://comhluadar.com/
-          DEPLOY
+        DEPLOY
 
-          - name: Remove SSH key
-            if: always()
-            run: rm -f ~/.ssh/deploy_key
+    - name: Remove SSH key
+      if: always()
+      run: rm -f ~/.ssh/deploy_key
