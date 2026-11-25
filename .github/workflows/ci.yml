@@ -59,12 +59,29 @@ jobs:
         printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
         printf '%s\n' "$EC2_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        if [ -z "$EC2_KNOWN_HOSTS" ]; then
+          echo '::error::EC2_KNOWN_HOSTS is empty in this job.'
+          exit 1
+        fi
+
+        if ! entries=$(ssh-keygen -F "$EC2_HOST" -f "$HOME/.ssh/known_hosts" 2>/dev/null); then
+          echo '::error::No known_hosts entry matches EC2_HOST.'
+          exit 1
+        fi
+
+        if ! printf '%s\n' "$entries" |
+          awk '$2 == "ssh-ed25519" {print $2, $3}' |
+          ssh-keygen -l -f /dev/stdin >/dev/null 2>&1; then
+          echo '::error::The matching entry needs a complete ED25519 public host key.'
+          exit 1
+        fi
 
     - name: Deploy tested commit
       run: |
         ssh -i ~/.ssh/deploy_key \
         -o BatchMode=yes \
         -o StrictHostKeyChecking=yes \
+        -o "UserKnownHostsFile=$HOME/.ssh/known_hosts" \
         -o ConnectTimeout=15 \
         "$EC2_USER@$EC2_HOST" \
         "bash -s -- '$GITHUB_SHA'" <<'DEPLOY'
