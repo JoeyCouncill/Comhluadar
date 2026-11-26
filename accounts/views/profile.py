@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_not_required
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Avg
+from django.db.models import Avg, Exists, OuterRef, Q
 from accounts.forms import EditProfileForm
+from services.engagements import engagements_for_participant, requests_for_participant
 from services.models import Review
 
 
@@ -51,14 +52,29 @@ def account_summary(request, user_id=None):
     }
 
     if is_own_profile:
-        context['listings'] = request.user.listings.order_by(
-        "-created_at")
+        context["listings"] = (request.user.listings.filter(engagement__isnull=True).order_by("-created_at"))
 
-    return render(
-        request,
-        "account_summary.html",
-        context,
-    )
+        reviews_for_this_engagement = Review.objects.filter(listing_id=OuterRef("listing_id"), reviewer=request.user
+        ).filter(
+                Q(reviewed_user_id=OuterRef("listing__author_id"))
+                | Q(reviewed_user_id=OuterRef("request__requester_id"))
+        )
+
+        context["confirmed_engagements"] = (
+            engagements_for_participant(request.user)
+            .select_related("listing__author__profile", "request__requester__profile")
+            .annotate(has_reviewed=Exists(reviews_for_this_engagement))
+            .order_by("-confirmed_at", "-pk")
+        )
+
+        context["pending_requests"] = (
+            requests_for_participant(request.user)
+            .filter(declined_at__isnull=True, listing__engagement__isnull=True)
+            .select_related("listing__author__profile", "requester__profile")
+            .order_by("-created_at", "-pk")
+        )
+
+    return render(request, "account_summary.html", context)
 
 
 def edit_profile(request):

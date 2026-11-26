@@ -1,48 +1,48 @@
 from django import forms
 from django.utils import timezone
-from django.contrib.auth import get_user_model
 from .models import Listing
 
 class CreateListingForm(forms.ModelForm):
-	class Meta:
-		model = Listing
-		fields = ['service_type', 'title', 'category', 'date']
 
-	def clean_date(self):
-		date = self.cleaned_data['date']
+    
+    class Meta:
+        model = Listing
+        fields = ["service_type", "title", "description", "category", "date"]
+        labels = {
+            "service_type": "Service Type",
+            "title": "Service Title",
+            "description": "Service Description",
+            "category": "Service Category",
+            "date": "Service Date",
+        }
 
-		if date < timezone.localdate():
-			raise forms.ValidationError('Service date cannot be in the past.')
+        widgets = {
+            "service_type": forms.Select(attrs={"id": "service_type", "class": "form-select"}),
+            "title": forms.TextInput(attrs={"id": "title", "class": "form-control"}),
+            "description": forms.Textarea(attrs={"id": "description", "class": "form-control", "rows": 3}),
+            "category": forms.Select(attrs={"id": "category", "class": "form-select"}),
+            "date": forms.DateInput(format="%Y-%m-%d", attrs={"id": "date", "type": "date", "class": "form-control"}),
+        }
 
-		return date
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["date"].widget.attrs["min"] = timezone.localdate().isoformat()
+
+    def clean_date(self):
+        date = self.cleaned_data["date"]
+        if date < timezone.localdate():
+            raise forms.ValidationError("Service date cannot be in the past.")
+        return date
 
 class ReviewForm(forms.Form):
-    reviewed_user = forms.ModelChoiceField(
-        queryset=get_user_model().objects.none(),
-        label="Person you are reviewing",
-    )
     rating = forms.TypedChoiceField(
-        choices=[(number, f"{number}/5") for number in range(1, 6)],
+        choices=[("", "Choose a rating")]
+        + [(number, f"{number}/5") for number in range(1, 6)],
         coerce=int,
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
-    comment = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 3}),
-    )
+    comment = forms.CharField(required=False, max_length=1000, widget=forms.Textarea(attrs={"class": "form-control", "rows": 3}))
 
-    def __init__(self, *args, listing, reviewer, **kwargs):
-        super().__init__(*args, **kwargs)
 
-        users = get_user_model().objects
-
-        if reviewer.pk == listing.author_id:
-            self.fields["reviewed_user"].queryset = (
-                users.exclude(pk=reviewer.pk)
-                .order_by("username")
-            )
-        else:
-            self.fields["reviewed_user"].queryset = users.filter(
-                pk=listing.author_id
-            )
-            self.fields["reviewed_user"].initial = listing.author_id
-            self.fields["reviewed_user"].widget = forms.HiddenInput()
+class EngagementRoundForm(forms.Form):
+    decision_round = forms.IntegerField(min_value=1)

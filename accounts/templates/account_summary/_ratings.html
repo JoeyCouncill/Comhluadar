@@ -77,16 +77,11 @@
               class="border rounded p-3 mb-3"
               id="review-{{ review.id }}"
             >
-
               <!-- Reviewer and Rating -->
               <div class="d-flex justify-content-between align-items-start">
                 <div>
                   <strong>
-                    {% if review.reviewer.get_full_name %}
-                      {{ review.reviewer.get_full_name }}
-                    {% else %}
-                      {{ review.reviewer.username }}
-                    {% endif %}
+                    {% include "accounts/_profile_link.html" with person=review.reviewer only %}
                   </strong>
                     <div class="text-muted small">
                       {{ review.created_at|date:"M j, Y" }}
@@ -99,6 +94,7 @@
                   ★ {{ review.rating }}/5
                 </div>
               </div>
+
               <!-- Review Comment -->
               {% if review.comment %}
                 <p class="mt-3 mb-0">
@@ -106,7 +102,7 @@
                 </p>
               {% endif %}
             </div>
-          {% empty %}
+            {% empty %}
           <div
             id="no-provider-reviews-message"
             class="text-center text-muted py-4"
@@ -139,15 +135,12 @@
               class="border rounded p-3 mb-3"
               id="review-{{ review.id }}"
             >
+
               <!-- Reviewer and Rating -->
               <div class="d-flex justify-content-between align-items-start">
                 <div>
                   <strong>
-                    {% if review.reviewer.get_full_name %}
-                      {{ review.reviewer.get_full_name }}
-                    {% else %}
-                      {{ review.reviewer.username }}
-                    {% endif %}
+                    {{ review.reviewer.profile.display_name }}                    
                   </strong>
                   <div class="text-muted small">
                     {{ review.created_at|date:"M j, Y" }}
@@ -160,6 +153,7 @@
                 ★ {{ review.rating }}/5
               </div>
             </div>
+            
               <!-- Review Comment -->
               {% if review.comment %}
                 <p class="mt-3 mb-0">

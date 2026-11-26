@@ -27,9 +27,7 @@ class Review(models.Model):
         max_length=10,
         choices=Role.choices,
     )
-    rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-    )
+    rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -41,9 +39,7 @@ class Review(models.Model):
                 name="unique_review_per_listing_pair",
             ),
             models.CheckConstraint(
-                condition=~models.Q(
-                    reviewer=models.F("reviewed_user")
-                ),
+                condition=~models.Q(reviewer=models.F("reviewed_user")),
                 name="review_prevent_self",
             ),
             models.CheckConstraint(
@@ -51,22 +47,15 @@ class Review(models.Model):
                 name="review_rating_range",
             ),
             models.CheckConstraint(
-                condition=models.Q(
-                    reviewed_role__in=["provider", "recipient"]
-                ),
+                condition=models.Q(reviewed_role__in=["provider", "recipient"]),
                 name="review_valid_role",
             ),
-
         ]
 
     def clean(self):
         super().clean()
 
-        if not (
-            self.listing_id
-            and self.reviewer_id
-            and self.reviewed_user_id
-        ):
+        if not (self.listing_id and self.reviewer_id and self.reviewed_user_id):
             return
 
         listing = self.listing
@@ -74,39 +63,14 @@ class Review(models.Model):
         if self.reviewer_id == self.reviewed_user_id:
             raise ValidationError("You cannot review yourself.")
 
-        author_is_reviewed = (
-            self.reviewed_user_id == listing.author_id
-        )
-        author_is_reviewer = (
-            self.reviewer_id == listing.author_id
-        )
+        author_is_reviewed = (self.reviewed_user_id == listing.author_id)
+        author_is_reviewer = (self.reviewer_id == listing.author_id)
 
         if not (author_is_reviewed or author_is_reviewer):
-            raise ValidationError(
-                "One person in this review must be the listing author."
-            )
+            raise ValidationError("One person in this review must be the listing author.")
 
-        if listing.service_type == "offer":
-            author_role = self.Role.PROVIDER
-            other_role = self.Role.RECIPIENT
-        elif listing.service_type == "request":
-            author_role = self.Role.RECIPIENT
-            other_role = self.Role.PROVIDER
-        else:
-            raise ValidationError("The listing has an invalid service type.")
-
-        expected_role = (
-            author_role if author_is_reviewed else other_role
-        )
-
-        if self.reviewed_role != expected_role:
-            raise ValidationError({
-                "reviewed_role":
-                    "This role does not match the listing and reviewed user."
-            })
+        if self.reviewed_role != listing.review_role_for(self.reviewed_user_id):
+            raise ValidationError({"reviewed_role": "This role does not match the listing and reviewed user."})
 
     def __str__(self):
-        return (
-            f"{self.reviewed_user}: "
-            f"{self.rating}/5 {self.get_reviewed_role_display()}"
-        )
+        return (f"{self.reviewed_user}: " f"{self.rating}/5 {self.get_reviewed_role_display()}")

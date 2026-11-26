@@ -15,64 +15,10 @@
   {% endif %}
 
   <!-- New listing Form -->
-  <form method="POST" class="border p-4 rounded bg-light shadow-sm">
+  <form method="post" class="border p-4 rounded bg-light shadow-sm">
     {% csrf_token %}
-    <div class="mb-3">
-      <label for="service_type" class="form-label">
-        Service Type
-      </label>
-      <select
-        id="service_type"
-        name="service_type"
-        class="form-select"
-        required
-      >
-        <option value="" selected disabled>Select an option</option>
-        <option value="offer">Offer a Service</option>
-        <option value="request">Request a Service</option>
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label for="title" class="form-label">Service Description</label>
-      <input
-        type="text"
-        id="title"
-        name="title"
-        class="form-control"
-        required
-      />
-    </div>
-
-    <div class="mb-3">
-      <label for="category" class="form-label">Service Category</label>
-      <select
-        id="category"
-        name="category"
-        class="form-select"
-        required
-      >
-        <option value="" selected disabled>Select a Category</option>
-        <option value="Tutoring">Tutoring</option>
-        <option value="Specialized Labor">Specialized Labor</option>
-        <option value="General Labor">General Labor</option>
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label for="date" class="form-label">Service Date</label>
-      <input
-        type="date"
-        id="date"
-        name="date"
-        class="form-control"
-        min="{{ today }}"
-        required
-      />
-    </div>
-    <button type="submit" class="btn btn-success">
-      Post Listing
-    </button>
+    {% include "services/_listing_fields.html" %}
+    <button type="submit" class="btn btn-success">Post Listing</button>
   </form>
 </div>
 {% endblock %}
