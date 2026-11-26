@@ -21,6 +21,10 @@ def user_login(request):
     ):
         next_url = ""
 
+    # If the user is hitting the login page due to an expired session, display an info message
+    if request.method == "GET" and next_url:
+        messages.info(request, "Please log in to continue. Your session may have expired.")
+
     email = ""
     if request.method == "POST":
         email = request.POST.get("email", "").strip().lower()
