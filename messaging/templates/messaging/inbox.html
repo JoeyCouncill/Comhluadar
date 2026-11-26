@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1 class="h3 mb-3">Messages</h1>
+  <div class="list-group">
+    {% for chat in chats %}
+      <a href="{% url 'chat_detail' chat.pk %}"
+        class="list-group-item list-group-item-action"
+      >
+        <div class="d-flex flex-wrap gap-2 fw-semibold">
+          {% for participant in chat.users.all %}
+            {% if participant.pk != user.pk %}
+              <span>{{ participant.profile.display_name }}</span>
+            {% endif %}
+          {% endfor %}
+          {% if chat.is_unread %}
+            <span class="badge bg-primary">Unread</span>
+          {% endif %}
+        </div>
+        <small class="text-muted">Started {{ chat.created_at|date:"M j, Y" }}</small>
+      </a>
+    {% empty %}
+      <p class="text-muted">No conversations yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

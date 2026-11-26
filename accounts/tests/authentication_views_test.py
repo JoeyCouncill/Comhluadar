@@ -71,7 +71,7 @@ def test_login_authenticates_user(client, test_user):
             "password": "My-Strong-Test-Password-928!",
     })
     assert response.status_code == 302
-    assert response.url == reverse("account_summary")
+    assert response.url == reverse("all_listings_view")
     assert int(client.session["_auth_user_id"]) == test_user.pk
 
 

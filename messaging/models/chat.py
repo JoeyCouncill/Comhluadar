@@ -8,8 +8,6 @@ class Chat(models.Model):
         related_name="chats",
     )
 
-    ##allow chats to be tied to specific listing offers/requests 
-    # (we dont have to use/implement if we dont want just thought it would be nice)
     listing = models.ForeignKey(
         "services.Listing",
         on_delete=models.SET_NULL,
@@ -47,3 +45,15 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message {self.pk} in chat {self.chat_id}"
+
+class UnreadChat(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="unread_chat_markers",
+    )
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
+    latest_message_id = models.PositiveBigIntegerField(null=True, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "chat"], name="unique_unread_marker_per_chat_user")]

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Conversation{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <a href="{% url 'inbox' %}" class="d-inline-block mb-3">Back to messages</a>
+  <h1 class="h3 mb-3">Conversation</h1>
+    {% if other_participants %}
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <span class="text-muted">With</span>
+        {% for participant in other_participants %}
+          {% include "accounts/_profile_link.html" with person=participant only %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% include "messaging/chat_context.html" %}
+    {% for message in conversation_messages %}
+      <article>
+        {% if message.sender_id == user.pk %}
+          You
+        {% elif message.sender_id %}
+          {{ message.sender.profile.display_name }}
+        {% else %}
+          Former member
+        {% endif %}
+        <time datetime="{{ message.created_at|date:'c' }}">
+          {{ message.created_at|date:"M j, Y, g:i a" }}
+        </time>
+        <p>{{ message.body }}</p>
+      </article>
+    {% empty %}
+      <p class="text-muted">No messages yet. Send the first one below.</p>
+    {% endfor %}
+  <form method="post"
+    action="{% url 'chat_detail' chat.pk %}"
+    data-chat-seen-url="{% url 'mark_chat_seen' chat.pk %}"
+    data-seen-through="{{ seen_through }}"
+  >
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Send</button>
+  </form>
+</div>
+{% endblock %}

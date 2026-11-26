@@ -38,7 +38,26 @@
           <a class="nav-link" href="{% url 'account_summary' %}"> My Account </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'inbox' %}"> Inbox </a>
+          <a class="nav-link" href="{% url 'inbox' %}">
+            Inbox
+            <span class="badge bg-danger ms-1 d-none" data-activity-badge="chats">
+              <span data-badge-value></span>
+              <span class="visually-hidden"> 
+                Unread Conversations
+              </span>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'notifications:inbox' %}">
+            Notifications
+            <span class="badge bg-danger ms-1 d-none" data-activity-badge="notifications">
+              <span data-badge-value></span>
+              <span class="visually-hidden">
+                Unread Notifications
+              </span>
+            </span>
+          </a>
         </li>
       {% if user.is_authenticated %}
         <li class="nav-item">
@@ -51,7 +70,7 @@
         </li>
       {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Login</a>
+          <a class="nav-link" href="{% url 'user_login' %}">Login</a>
         </li>
       {% endif %}
       </ul>
@@ -62,5 +81,12 @@
 
     <!-- Bootstrap JS -->
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% if user.is_authenticated %}
+      <script src="{% static 'js/activity-badges.js' %}"
+        data-counts-url="{% url 'activity_counts' %}"
+        defer
+      >
+      </script>
+    {% endif %}
   </body>
 </html>

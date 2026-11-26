@@ -1,0 +1,108 @@
+<div
+  class="tab-pane fade"
+  id="engagements-pane"
+  role="tabpanel"
+  aria-labelledby="engagements-tab"
+  tabindex="0"
+>
+  <section class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h2 class="h5 mb-3">Confirmed and completed engagements</h2>
+      <div class="list-group">
+        {% for engagement in confirmed_engagements %}
+          <div class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+              <a class="fw-semibold"
+                href="{% url 'listing_detail' engagement.listing_id %}"
+              >
+                {{ engagement.listing.title }}
+              </a>
+              <div class="small text-muted">
+                {% if engagement.listing.author_id == user.pk %}
+                  {% if engagement.request_id %}
+                    With {% include "accounts/_profile_link.html" with person=engagement.request.requester only %}
+                  {% else %}
+                    Other participant unavailable
+                  {% endif %}
+                {% else %}
+                  With {% include "accounts/_profile_link.html" with person=engagement.listing.author only %}
+                {% endif %}
+                {% if engagement.completed_at %}
+                  · Completed {{ engagement.completed_at|date:"M j, Y" }}
+                {% else %}
+                  · Confirmed {{ engagement.confirmed_at|date:"M j, Y" }}
+                {% endif %}
+              </div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center justify-content-end gap-2 ms-auto">
+              {% if engagement.request_id %}
+                {% if engagement.completed_at %}
+                  {% if engagement.has_reviewed %}
+                    <span class="small text-muted">Review submitted</span>
+                  {% else %}
+                    <a class="btn btn-sm btn-primary"
+                      href="{% url 'write_engagement_review' engagement.listing_id %}"
+                    >
+                      Write a review
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <form method="post"
+                    action="{% url 'mark_engagement_complete' engagement.listing_id %}"
+                  >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                      Mark service complete
+                    </button>
+                  </form>
+                {% endif %}
+              {% endif %}
+              {% if engagement.request_id and engagement.request.chat_id %}
+                <a class="btn btn-sm btn-outline-primary"
+                  href="{% url 'chat_detail' engagement.request.chat_id %}"
+                >
+                  Open chat
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted mb-0">No confirmed engagements yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  <section class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h2 class="h5 mb-3">Pending requests</h2>
+      <div class="list-group">
+        {% for item in pending_requests %}
+          <div class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+              <div class="fw-semibold">{{ item.listing.title }}</div>
+              <div class="small text-muted">
+                {% if item.listing.author_id == user.pk %}
+                  {% include "accounts/_profile_link.html" with person=item.requester only %}
+                {% else %}
+                  {% include "accounts/_profile_link.html" with person=item.listing.author only %}
+                {% endif %}
+                · {{ item.status_label }}
+              </div>
+            </div>
+            <a class="btn btn-sm btn-outline-primary"
+              href="{% url 'engagement_request_detail' item.listing_id item.pk %}"
+            >
+              {% if item.chat_id %}
+                Open chat
+              {% else %}
+                View request
+              {% endif %}
+            </a>
+          </div>
+        {% empty %}
+          <p class="text-muted mb-0">No pending engagement requests.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>

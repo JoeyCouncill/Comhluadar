@@ -1,0 +1,11 @@
+{% load engagement_tags %}
+{% may_reopen_engagement_request item user as may_reopen %}
+{% if may_reopen %}
+  <form method="post"
+    action="{% url 'reopen_engagement_request' item.listing_id item.pk %}"
+  >
+    {% csrf_token %}
+    <input type="hidden" name="decision_round" value="{{ item.decision_round }}">
+    <button type="submit" class="btn btn-primary">Reopen request</button>
+  </form>
+{% endif %}

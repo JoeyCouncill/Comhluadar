@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
@@ -23,8 +22,8 @@ class Listing(models.Model):
 
 	service_type = models.CharField(choices=ServiceType.choices)
 
-	title = models.CharField(max_length=200)
-	description = models.TextField(blank=True)
+	title = models.CharField(max_length=100)
+	description = models.TextField(blank=True, max_length=2000)
 	category = models.CharField(
 		max_length=50,
 		choices=service_types,
