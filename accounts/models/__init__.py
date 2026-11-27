@@ -1,1 +1,1 @@
-from .profile import Profile, UserBlock
+from .profile import Profile, UserBlock, UserReport

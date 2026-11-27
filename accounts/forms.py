@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile
+from .models import Profile, UserReport
 
 
 class EditProfileForm(forms.ModelForm):
@@ -9,11 +9,11 @@ class EditProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = [
-            "profile_picture", 
-            "cover_photo", 
-            "skills", 
-            "other_skill", 
-            "interests", 
+            "profile_picture",
+            "cover_photo",
+            "skills",
+            "other_skill",
+            "interests",
             "bio",
         ]
         widgets = {
@@ -47,3 +47,31 @@ class EditProfileForm(forms.ModelForm):
             cleaned_data["other_skill"] = ""
 
         return cleaned_data
+
+class UserReportForm(forms.ModelForm):
+    class Meta:
+        model = UserReport
+        fields = ["category", "description"]
+        widgets = {
+            "category": forms.Select(
+                attrs={"class": "form-select"}
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "maxlength": 2000,
+                    "placeholder": "Describe what happened.",
+                }
+            ),
+        }
+
+    def clean_description(self):
+        description = self.cleaned_data["description"].strip()
+
+        if not description:
+            raise forms.ValidationError(
+                "Please describe the reason for your report."
+            )
+
+        return description
