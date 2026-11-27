@@ -286,4 +286,4 @@ class TestListingdetail:
         Attempting to navigate directly to a listing detail page that doesn't exist gives a 404 page.
         """
         logged_in_browser.get(live_server.url + reverse('listing_detail', args=[99999]))
-        assert "Not Found" in logged_in_browser.page_source
+        assert "Looks like this page wandered off" in logged_in_browser.page_source
