@@ -74,3 +74,56 @@ class UserBlock(models.Model):
                 name="prevent_self_block",
             ),
         ]
+
+
+class UserReport(models.Model):
+    class Category(models.TextChoices):
+        HARASSMENT = "harassment", "Harassment or Bullying"
+        INAPPROPRIATE = "inappropriate", "Inappropriate Behavior"
+        SPAM = "spam", "Spam or Scams"
+        FRAUD = "fraud", "Fraud or Misrepresentation"
+        THREATS = "threats", "Threats or Safety Concerns"
+        DISCRIMINATION = "discrimination", "Discrimination or Hate Speech"
+        OTHER = "other", "Other"
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending Review"
+        REVIEWED = "reviewed", "Reviewed"
+        RESOLVED = "resolved", "Resolved"
+
+    reporter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="reports_submitted",
+    )
+    reported_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="reports_received",
+    )
+    category = models.CharField(
+        max_length=20,
+        choices=Category.choices,
+    )
+    description = models.TextField(max_length=2000)
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(
+                    reporter=models.F("reported_user")
+                ),
+                name="prevent_self_report",
+            ),
+        ]
+
+    def __str__(self):
+        return f"Report #{self.pk} - {self.get_category_display()}"

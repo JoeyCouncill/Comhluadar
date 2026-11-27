@@ -8,6 +8,8 @@ from django.core.exceptions import PermissionDenied
 from messaging.services import create_chat
 from notifications.services import notify
 from .models import Engagement, Listing, ListingRequest, Review
+from accounts.moderation import users_are_blocked
+
 
 def requests_for_participant(user):
     """Returns all requests a given user is part of"""
@@ -61,11 +63,15 @@ def _notify_request(item, recipient, text):
         url=reverse("engagement_request_detail", kwargs={"listing_id": item.listing_id, "request_id": item.pk}),
     )
 
-    
+
 @transaction.atomic
 def create_listing_request(listing_id, user):
     listing = lock_listing(listing_id)
     ### Checks ###
+    if users_are_blocked(user, listing.author):
+        raise PermissionDenied(
+            "Engagements are not permitted between blocked users."
+        )
     if listing.author_id == user.pk:
         raise Http404
 
@@ -84,7 +90,7 @@ def create_listing_request(listing_id, user):
         listing.author,
         f'Someone is interested in "{listing.title}". Would you like to start a chat?',
     )
-    
+
     return item
 
 
@@ -92,6 +98,10 @@ def create_listing_request(listing_id, user):
 def start_request_chat(listing_id, request_id, user):
     lock_listing(listing_id)
     item = request_for_participant(listing_id, request_id, user)
+    if users_are_blocked(item.requester, item.listing.author):
+        raise PermissionDenied(
+            "Cannot start an engagement chat between blocked users."
+        )
     if item.listing.author_id != user.pk:
         raise Http404
 
@@ -106,6 +116,10 @@ def start_request_chat(listing_id, request_id, user):
 def reopen_listing_request(listing_id, request_id, user, *, decision_round):
     lock_listing(listing_id)
     item = request_for_participant(listing_id, request_id, user)
+    if users_are_blocked(item.requester, item.listing.author):
+        raise PermissionDenied(
+            "Cannot reopen an engagement between blocked users."
+        )
 
     if item.decision_round != decision_round or item.declined_at is None:
         return item
@@ -141,7 +155,12 @@ def reopen_listing_request(listing_id, request_id, user, *, decision_round):
 def decide_request(listing_id, request_id, user, *, agree, decision_round=None):
     lock_listing(listing_id)
     item = request_for_participant(listing_id, request_id, user)
-
+    if agree and users_are_blocked(
+        item.requester, item.listing.author
+    ):
+        raise PermissionDenied(
+            "Cannot agree to an engagement between blocked users."
+        )
     if decision_round is not None and item.decision_round != decision_round:
         return item
 
